@@ -82,9 +82,9 @@ procedure Routeur is
      Stat : Boolean; -- Afficher les stats du cache ou non
      Table_Routage : T_Table_Routage; -- Table de routage
      Politique : T_Politque; -- Politique du cache
-     ligne : Unbounded_String; -- Ligne lu dans le fichier d'entrée
-     AdresseIP, Masque : T_Adresse_IP;
-     Interface : Unbounded_String;
+     ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
+     AdresseIP, Masque : T_Adresse_IP; -- Adresse IP et Masque à gérer
+     Interface : Unbounded_String; -- Interface correspondante à l'adresse IP
      Entree : File_Type; -- Le descripteur du fichier d'entrée
      Sortie : File_Type; -- Le descripteur du fichier de sortie
 begin 
@@ -109,5 +109,33 @@ begin
                Null;
      end;
      Close(Entree);
+     
+     -- Traiter les lignes du fichier paquets
+     Open(Entree, In_File, To_String(Fich_Paquets));
+     Create(Sortie, Out_File, To_String(Fich_Resultats));
+     loop
+          ligne := Get_Line(Entree);
+          Trim(ligne, Both);
+          if '0' <= ligne(0)  and then ligne(0) <= '9' then
+               AdresseIP := Lire_Adresse_IP(Entree);
+               Interface := Chercher_Element(Table_Routage, AdresseIP);
+               Put_Line(Sortie, ligne & " " & Interface);
+          elsif To_String(ligne) = "table" then
+               Afficher(Table_Routage);
+          elsif To_String(ligne) = "cache" then
+               Null; -- Pour le moment pas de cache
+          elsif To_String(ligne) = "stat" then
+               Null; -- Pour le moment pas de cache
+          elsif To_String(ligne) = "fin" then
+               Null;
+          else
+               Put_Line("Erreur de lecture dans le fichier paquets");
+          end if; 
+          exit when End_Of_File (Entree) or To_String(ligne) = "fin";
+     end loop;
 
+     --Fermeture des fichiers et vider la table de routage
+     Close(Entree);
+     Close(Sortie);
+     Vider(Table_Routage);
 end Routeur;
