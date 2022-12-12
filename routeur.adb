@@ -61,9 +61,9 @@ procedure Routeur is
      
      Fich_Table, Fich_Paquets, Fich_Resultats : String;
      Stat : Boolean;
-
+     i : Integer;
 begin 
      -- Traiter les options du programmes
      Traiter_Option(Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
-
+     i := 1;
 end Routeur;
