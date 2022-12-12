@@ -7,33 +7,21 @@ with Alea;
 -- mise en place d'un routeur avec cache.
 procedure Routeur is
 
-     -- Traiter les options du programme
-     procedure Traiter_Option is
+     -- Initialise les options du programme par dÃ©faut
+     procedure Traiter_option(Fich_Table : out String; Fich_Paquets : out String; Fich_Resultats : out String; Politique : out T_Politique; Stat : out Boolean) is
      begin
-     end Traiter_Option;
+          Politique := FIFO;
+          Stat := true;
+          Fich_Table := "table.txt";
+          Fich_Paquets := "paquets.txt";
+          Fich_Resultats := "resultats.txt";
+     end Initialiser_option;
+     
+     Fich_Table, Fich_Paquets, Fich_Resultats : String;
+     Stat : Boolean;
 
-     -- lire la table de routage dans le fichier table
-     procedure Lecture_Table () is
-     begin
-     end Lecture_Table;
+begin 
+     -- Traiter les options du programmes
+     Traiter_Option(Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
 
-     -- on répète jusqu'à tomber sur la fin du fichier
-     loop
-          -- lire une ligne
-          procedure Lecture_Ligne () is
-          begin
-          end Lecture_Ligne;
-
-          -- traiter une ligne
-          procedure Traiter_Ligne () is
-          begin
-          end Traiter_Ligne;
-
-          exit when ligne = "fin";
-     end loop;
-
-     -- fermeture du fichier
-     procedure Fermer_Fichier is
-     begin
-     end Fermer_Fichier;
 end Routeur;
