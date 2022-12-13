@@ -1,4 +1,5 @@
 with Ada.Unchecked_Deallocation;
+with Adresse_IP;
 package body Table_Routage is
 
 
@@ -11,7 +12,7 @@ package body Table_Routage is
         begin
                 loop
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours := null);
+                        exit when (Table_parcours = null);
                 end loop;
                 Table_parcours := new T_Cellule'(Destination, Masque, Interface_eth, null);
         end Ajouter;
@@ -43,7 +44,7 @@ package body Table_Routage is
         begin
                 loop
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours.all.Destination := Destination);
+                        exit when (Table_parcours.all.Destination = Destination);
                 end loop;
                 return Table_parcours.all.Interface_eth;
         end Chercher_Element;
@@ -59,7 +60,7 @@ package body Table_Routage is
                         Put(Table_parcours.all.Interface_eth);
                         New_Line;
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours := null);
+                        exit when (Table_parcours = null);
                 end loop;
         end Afficher;
 
