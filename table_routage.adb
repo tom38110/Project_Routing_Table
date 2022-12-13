@@ -1,4 +1,6 @@
 with Ada.Unchecked_Deallocation;
+with Adresse_IP;
+
 package body Table_Routage is
 
 
@@ -11,7 +13,7 @@ package body Table_Routage is
         begin
                 loop
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours := null);
+                        exit when (Table_parcours = null);
                 end loop;
                 Table_parcours := new T_Cellule'(Destination, Masque, Interface_eth, null);
         end Ajouter;
@@ -38,12 +40,11 @@ package body Table_Routage is
         end Initialiser;
 
 
-        function Chercher_Element(Table : T_Table_Routage ; Destination: T_Adresse_IP) return Unbounded_String is
+        function Chercher_Element(Table : T_Table_Routage ; Paquet: T_Adresse_IP) return Unbounded_String is
                 Table_parcours : T_Table_Routage := Table;
         begin
-                loop
+                while (Comp_Destination_Paquet(Table_parcours.all.Destination; Table_parcours.all.Masque; Paquet) = False) loop
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours.all.Destination := Destination);
                 end loop;
                 return Table_parcours.all.Interface_eth;
         end Chercher_Element;
@@ -53,14 +54,17 @@ package body Table_Routage is
         procedure Afficher(Table : T_Table_Routage) is
                 Table_parcours : T_Table_Routage := Table;
         begin
-                loop
-                        Put(Table_parcours.all.Destination);
-                        Put(Table_parcours.all.Masque);
+                while (Table_parcours /= null) loop
+                        Put(Conv_IP_ligne(Table_parcours.all.Destination));
+                        Put(" ");
+                        Put(Conv_IP_ligne(Table_parcours.all.Masque));
+                        Put(" ");
                         Put(Table_parcours.all.Interface_eth);
                         New_Line;
                         Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours := null);
                 end loop;
         end Afficher;
 
 end Table_Routage;
+
+
