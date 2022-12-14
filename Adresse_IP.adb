@@ -44,20 +44,7 @@ package body Adresse_IP is
                ad_ip := ad_ip*UN_OCTET + val;       -- on construit l'adresse_IP à l'aide du schéma de Horner
           end loop;
           return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
-     end Lire_Adresse_IP;     function Lire_Adresse_IP (Entree : File_Type) return T_Adresse_IP is 
-          c: character;
-          val:Integer;
-          ad_ip:T_Adresse_IP;
-     begin
-          
-          for i in 1..4 loop
-               Get(Entree,val);
-               Get(Entree,c);
-               ad_ip := ad_ip*UN_OCTET + val;
-          end loop;
-
-     end Lire_Adresse_IP;
-
+     end Lire_Adresse_IP;    
 
      -- Fonction qui renvoie un booléen qui confirme ou non la compatibilité entre une Destination et un Paquet.
 
