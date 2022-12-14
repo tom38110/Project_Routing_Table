@@ -10,7 +10,6 @@ package body Adresse_IP is
      function Conv_IP_String (Adresse_IP: in T_Adresse_IP) return unbounded_string is
 
         type T_Adresse_IP is mod 2 ** 32;
-
         UN_OCTET: constant T_Adresse_IP := 2 ** 8;       -- 256
         IP: T_Adresse_IP;                                -- Adresse IP copie qui permet d'afficher l'adresse IP sans modifier l'origiinale
         Str: unbounded_string;                           -- Adresse IP convertie sous forme de chaine de caractère
@@ -25,17 +24,19 @@ package body Adresse_IP is
                 Str:= Str & ".";
             end loop;
         end loop;
-
         return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
+    
      end Conv_IP_String;
 
 
      -- Fonction qui permet de lire une adresse IP dans un fichier Entree et la convertir en un type T_Adresse_IP
     
      function Lire_Adresse_IP (Entree : File_Type) return T_Adresse_IP is 
+         
           c: character;                     -- permet de traiter le "."
           val:Integer;                      -- la valeur (ni) qui va etre convertie en binaire
           ad_ip:T_Adresse_IP;               -- l'adresse IP convertie en binaire
+     
      begin
           
           for i in 1..4 loop                -- pour chaque ni de l'adresse IP
@@ -44,16 +45,20 @@ package body Adresse_IP is
                ad_ip := ad_ip*UN_OCTET + val;       -- on construit l'adresse_IP à l'aide du schéma de Horner
           end loop;
           return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
+     
      end Lire_Adresse_IP;    
 
      -- Fonction qui renvoie un booléen qui confirme ou non la compatibilité entre une Destination et un Paquet.
 
      function Comp_Destination_Paquet(Destination:T_Adresse_IP; Masque: T_Adresse_IP; Paquet:T_Adresse_IP) return Boolean is 
+          
           val2:T_Adresse_IP;
           T:Boolean;
           M:T_Adresse_IP;
           i:Integer;
+          
      begin
+     
           T:=True;                          -- on initialise notre T à True 
           val2 := Paquet;                   -- on créé une copie du paquet
           M := Masque;                      -- on créé une copie du masque 
@@ -73,6 +78,7 @@ package body Adresse_IP is
                i:=i+1;                      -- permet d'assurer la bonne terminaison de la boucle while à la fin de la comparaison
           end loop;
           return T;
+          
      end Comp_Destination_Paquet;
           
 end Adresse_IP;
