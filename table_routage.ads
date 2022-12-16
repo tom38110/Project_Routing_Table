@@ -1,4 +1,4 @@
-with Adresse_IP;
+with Adresse_IP;  use Adresse_IP;
 
 package Table_Routage is
 
