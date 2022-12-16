@@ -12,17 +12,17 @@ package body Table_Routage is
                 Table_parcours : T_Table_Routage := Table;
         begin
                 loop
-                        Table_parcours := Table_parcours.all.Suivante;
-                        exit when (Table_parcours = null);
-                end loop;
-                Table_parcours := new T_Cellule'(Destination, Masque, Interface_eth, null);
+                        Table_parcours := Table_parcours.all.Suivante;           --Pour acceder au dernier element de la liste chainee,
+                        exit when (Table_parcours = null);                       --il faut la parcourir jusqu'a l'element qui pointe vers null.
+                end loop;                                                        --on fait pointer ce dernier élément vers la cellule souhaitee
+                Table_parcours := new T_Cellule'(Destination, Masque, Interface_eth, null);    
         end Ajouter;
 
 
         procedure Vider(Table : T_Table_Routage) is
                 Detruire : T_Table_Routage ;
-        begin
-                if Table = null then
+        begin                                               --On procede recursivement: a chaque appelle de la procedure,
+                if Table = null then                        --on libere un element de la liste chainee jusqu'a ce qu'elle soit vide
                         null;
                 else
                         Detruire := Table;
