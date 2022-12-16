@@ -4,14 +4,12 @@ with Ada.Command_Line;             use Ada.Command_Line;
 with Ada.Strings;                  use Ada.Strings;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;     use Ada.Text_IO.Unbounded_IO;
-with Ada.Exceptions;               use Ada.Exceptions;
-with Table_Routage;                use Table_Routage;
 with Adresse_IP;                   use Adresse_IP;
+with Table_Routage;                use Table_Routage;
+
 
 -- mise en place d'un routeur avec cache.
 procedure Routeur is
-     -- Type énuméré de la politique du cache
-     Type T_Politque is (FIFO, LRU, LFU);
 
      -- Affiche l'usage du programme
      procedure Afficher_Usage is
@@ -30,7 +28,7 @@ procedure Routeur is
      end Afficher_Usage;
 
      -- Traite les options du programme
-     procedure Traiter_option(Taille_Cache : out Integer; Fich_Table : out String; Fich_Paquets : out String; Fich_Resultats : out String; Politique : out T_Politique; Stat : out Boolean) is
+     procedure Traiter_option(Taille_Cache : out Integer; Fich_Table : out Unbounded_String; Fich_Paquets : out Unbounded_String; Fich_Resultats : out Unbounded_String; Politique : out T_Politique; Stat : out Boolean) is
           i : Integer;
      begin
           -- Initialiser les options par défaut
@@ -44,7 +42,6 @@ procedure Routeur is
           -- Modifier les options si nécessaire
           i := 1;
           while i <= Argument_Count loop
-               
                if Argument(i) = "-c" then
                     i := i + 1;
                     Taille_Cache := Integer'Value(Argument(i));
@@ -78,18 +75,20 @@ procedure Routeur is
           end loop;
      end Traiter_Option;
 
+     Taille_Cache : Integer; -- Taille du cache
      Fich_Table, Fich_Paquets, Fich_Resultats : Unbounded_String; -- Noms des fichiers à gérer
      Stat : Boolean; -- Afficher les stats du cache ou non
      Table_Routage : T_Table_Routage; -- Table de routage
-     Politique : T_Politque; -- Politique du cache
+     Politique : T_Politique; -- Politique du cache
+     i : Integer; -- Compteur de ligne dans le fichier des paquets
      ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
      AdresseIP, Masque : T_Adresse_IP; -- Adresse IP et Masque à gérer
-     Interface : Unbounded_String; -- Interface correspondante à l'adresse IP
+     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
      Entree : File_Type; -- Le descripteur du fichier d'entrée
      Sortie : File_Type; -- Le descripteur du fichier de sortie
 begin 
      -- Traiter les options du programmes
-     Traiter_Option(Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
+     Traiter_Option(Taille_Cache, Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
 
      -- Lire la table de routage dans le fichier
      Open(Entree, In_File, To_String(Fich_Table));
@@ -98,9 +97,9 @@ begin
           loop
                AdresseIP := Lire_Adresse_IP(Entree);
                Masque := Lire_Adresse_IP(Entree);
-               Interface := Get_Line(Entree);
-               Trim(Interface, Both);
-               Ajouter(Table_Routage, AdresseIP, Masque, Interface);
+               Interface_eth := Get_Line(Entree);
+               Trim(Interface_eth, Both);
+               Ajouter(Table_Routage, AdresseIP, Masque, Interface_eth);
                exit when End_Of_File (Entree);
           end loop;
      exception
@@ -113,24 +112,42 @@ begin
      -- Traiter les lignes du fichier paquets
      Open(Entree, In_File, To_String(Fich_Paquets));
      Create(Sortie, Out_File, To_String(Fich_Resultats));
+     i := 1;
      loop
           ligne := Get_Line(Entree);
           Trim(ligne, Both);
-          if '0' <= ligne(0)  and then ligne(0) <= '9' then
+          if '0' <= To_String(ligne)(1)  and then To_String(ligne)(1) <= '9' then
                AdresseIP := Lire_Adresse_IP(Entree);
-               Interface := Chercher_Element(Table_Routage, AdresseIP);
-               Put_Line(Sortie, ligne & " " & Interface);
+               Interface_eth := Chercher_Element(Table_Routage, AdresseIP);
+               Put_Line(Sortie, ligne & " " & Interface_eth);
           elsif To_String(ligne) = "table" then
+               Put(To_String(ligne) & " (ligne");
+               Put(i, 3);
+               Put(")");
+               New_Line;
                Afficher(Table_Routage);
           elsif To_String(ligne) = "cache" then
+               Put(To_String(ligne) & " (ligne");
+               Put(i, 3);
+               Put(")");
+               New_Line;
                Null; -- Pour le moment pas de cache
           elsif To_String(ligne) = "stat" then
+               Put(To_String(ligne) & " (ligne");
+               Put(i, 3);
+               Put(")");
+               New_Line;
                Null; -- Pour le moment pas de cache
           elsif To_String(ligne) = "fin" then
+               Put(To_String(ligne) & " (ligne");
+               Put(i, 3);
+               Put(")");
+               New_Line;
                Null;
           else
                Put_Line("Erreur de lecture dans le fichier paquets");
           end if; 
+          i := i + 1;
           exit when End_Of_File (Entree) or To_String(ligne) = "fin";
      end loop;
 

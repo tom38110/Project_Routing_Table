@@ -1,5 +1,11 @@
-with Ada.Unchecked_Deallocation;
-with Adresse_IP;
+with Ada.Text_IO;                  use Ada.Text_IO;
+with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
+with Ada.Command_Line;             use Ada.Command_Line;
+with Ada.Strings;                  use Ada.Strings;
+with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
+with Ada.Text_IO.Unbounded_IO;     use Ada.Text_IO.Unbounded_IO;
+with Ada.Exceptions;               use Ada.Exceptions;
+with Adresse_IP;                   use Adresse_IP;
 
 package body Table_Routage is
 

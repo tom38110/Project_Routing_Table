@@ -1,31 +1,23 @@
-with Ada.Text_IO;            use Ada.Text_IO;
-with Ada.Integer_Text_IO;    use Ada.Integer_Text_IO;
-
-
 package body Adresse_IP is
 
      -- Fonction qui a pour but de convertir une adresse IP (binaire) en une chaine de caractère composée de quatre 
      -- entiers de la forme "n1.n2.n3.n4".
+     function Conv_IP_String (Adresse_IP: in T_Adresse_IP) return Unbounded_String is
 
-     function Conv_IP_String (Adresse_IP: in T_Adresse_IP) return unbounded_string is
-
-        type T_Adresse_IP is mod 2 ** 32;
-        UN_OCTET: constant T_Adresse_IP := 2 ** 8;       -- 256
-        IP: T_Adresse_IP;                                -- Adresse IP copie qui permet d'afficher l'adresse IP sans modifier l'origiinale
-        Str: unbounded_string;                           -- Adresse IP convertie sous forme de chaine de caractère
+          IP: T_Adresse_IP;                                -- Adresse IP copie qui permet d'afficher l'adresse IP sans modifier l'origiinale
+          Str: unbounded_string;                           -- Adresse IP convertie sous forme de chaine de caractère
 
      begin
      
         IP := Adresse_IP + 2 ** 8;
 
-        for i in 1..4 loop                                                          -- on boucle 4 fois pour afficher toutes les valeurs dans une adresse IP
-            Str:= Str &  Integer'Image (((IP / UN_OCTET ** (4-i)) mod UN_OCTET));
-            while i/=4 loop                                                             -- permet d'afficher les "." juste après les 3 premières valeurs
-                Str:= Str & ".";
-            end loop;
-        end loop;
-        return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
-    
+          for i in 1..4 loop                                                          -- on boucle 4 fois pour afficher toutes les valeurs dans une adresse IP
+               Str:= Str &  Integer'Image (((IP / UN_OCTET ** (4-i)) mod UN_OCTET));
+               while i/=4 loop                                                             -- permet d'afficher les "." juste après les 3 premières valeurs
+                    Str:= Str & ".";
+               end loop;
+          end loop;
+          return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
      end Conv_IP_String;
 
 
