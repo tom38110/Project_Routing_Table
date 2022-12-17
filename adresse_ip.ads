@@ -12,9 +12,9 @@ package Adresse_IP is
      function Conv_IP_String (Adresse_IP : in T_Adresse_IP) return Unbounded_String;
 
      -- Lit l'adresse IP dans le fichier et la renvoie
-     function Lire_Adresse_IP (Entree : File_Type) return T_Adresse_IP;
+     function Lire_Adresse_IP (Entree : in File_Type) return T_Adresse_IP;
 
      -- Dis si un paquet correspond
-     function Comp_Destination_Paquet(Destination:T_Adresse_IP; Masque: T_Adresse_IP; Paquet:T_Adresse_IP) return Boolean;
+     function Comp_Destination_Paquet(Destination: in T_Adresse_IP; Masque: in T_Adresse_IP; Paquet: in T_Adresse_IP) return Boolean;
      
 end Adresse_IP;
