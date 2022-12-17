@@ -20,25 +20,39 @@ package body Adresse_IP is
           return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
      end Conv_IP_String;
 
-
-     -- Fonction qui permet de lire une adresse IP dans un fichier Entree et la convertir en un type T_Adresse_IP
+-- fonction qui prend un fichier Entree et renvoie une ligne.    
     
-     function Lire_Adresse_IP (Entree : in File_Type) return T_Adresse_IP is 
-         
-          c: character;                     -- permet de traiter le "."
-          val:Integer;                      -- la valeur (ni) qui va etre convertie en binaire
-          ad_ip:T_Adresse_IP;               -- l'adresse IP convertie en binaire
-     
+     function Lire_Ligne_Espace (Entree : in File_Type) return Unbounded_String is
      begin
-          
-          for i in 1..4 loop                -- pour chaque ni de l'adresse IP
-               Get(Entree,val);             -- on récupère la valeur de ni
-               Get(Entree,c);               -- on lit le "." pour éviter de stopper l'algorithme
-               ad_ip := ad_ip*UN_OCTET + Integer'Image (val);       -- on construit l'adresse_IP à l'aide du schéma de Horner
+         Ligne := Entree;
+
+         for i in Entree'Range loop
+               if Entree (i) = ' ' then 
+                    Ligne := Entree (Entree'First .. i-1);
+                    Exit;
+               end if;
           end loop;
-          return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
-     
-     end Lire_Adresse_IP;    
+          return Ligne;
+     end Lire_Ligne_Espace;     
+
+-- Fonction qui permet de lire une adresse IP dans un fichier Entree et la convertir en un type T_Adresse_IP
+
+     function Lire_Adresse_IP (Entree : in File_Type) return T_Adresse_IP is 
+
+         c: character;                     -- permet de traiter le "."
+         val:Integer;                      -- la valeur (ni) qui va etre convertie en binaire
+         ad_ip:T_Adresse_IP;               -- l'adresse IP convertie en binaire
+
+     begin
+
+         Line:= Lire_Ligne_Espace(Entree);
+         ad_ip := Integer'Value(Line);                       -- on récupère la valeur de n1
+         ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n2
+         ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n3
+          ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n4
+         return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
+
+     end Lire_Adresse_IP;      
 
      -- Fonction qui renvoie un booléen qui confirme ou non la compatibilité entre une Destination et un Paquet.
 
