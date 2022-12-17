@@ -11,7 +11,7 @@ package Adresse_IP is
      -- Convertir une Adresse IP (binaire) en ligne (string)
      function Conv_IP_String (Adresse_IP : in T_Adresse_IP) return Unbounded_String;
      
-     --
+     -- Fonction qui prend un fichier Entree et renvoie une ligne.
      function Lire_Ligne_Espace (Entree : in File_Type) return Unbounded_String;
      
      -- Lit l'adresse IP dans le fichier et la renvoie
