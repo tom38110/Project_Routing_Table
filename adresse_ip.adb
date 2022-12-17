@@ -56,10 +56,10 @@ package body Adresse_IP is
           M := Masque;                      -- on créé une copie du masque 
           i:=0;
           while T=True and then i < 4 loop                      -- tant qu'on a bien égalité entre les valeurs de destination et de paquet et que l'on n'est pas arrivé à la fin
-               if (val2 mod UN_OCTET) = (Destination mod UN_OCTET) then -- si on a egalité entre les 2 ni on ne fait rien
+               if (Natural(val2 mod UN_OCTET)) = (Natural(Destination mod UN_OCTET)) then -- si on a egalité entre les 2 ni on ne fait rien
                     null;
                else                                                 
-                    if (masque mod UN_OCTET) = 0 then               -- sinon on observe la valeur du masque associée, si elle est égale à 0 on ne fait rien
+                    if (Natural(masque mod UN_OCTET)) = 0 then               -- sinon on observe la valeur du masque associée, si elle est égale à 0 on ne fait rien
                          val2:= val2 / UN_OCTET;                    -- on modifie les valeurs des copies afin de passer aux ni suivants
                          Destination := Destination / UN_OCTET;
                          M:= M / UN_OCTET;
