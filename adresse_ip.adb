@@ -48,20 +48,22 @@ package body Adresse_IP is
           T:Boolean;
           M:T_Adresse_IP;
           i:Integer;
-          
+          Dest2: T_Adresse_IP;
      begin
      
           T:=True;                          -- on initialise notre T à True 
           val2 := Paquet;                   -- on créé une copie du paquet
           M := Masque;                      -- on créé une copie du masque 
           i:=0;
+          Dest2:=Destination;
+          
           while T=True and then i < 4 loop                      -- tant qu'on a bien égalité entre les valeurs de destination et de paquet et que l'on n'est pas arrivé à la fin
                if (Natural(val2 mod UN_OCTET)) = (Natural(Destination mod UN_OCTET)) then -- si on a egalité entre les 2 ni on ne fait rien
                     null;
                else                                                 
                     if (Natural(masque mod UN_OCTET)) = 0 then               -- sinon on observe la valeur du masque associée, si elle est égale à 0 on ne fait rien
                          val2:= val2 / UN_OCTET;                    -- on modifie les valeurs des copies afin de passer aux ni suivants
-                         Destination := Destination / UN_OCTET;
+                         Dest2 := Dest2 / UN_OCTET;
                          M:= M / UN_OCTET;
                     else
                          T:=False;                                  -- on change T en False car on ne respecte pas la cohérence du cache.
