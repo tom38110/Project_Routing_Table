@@ -1,3 +1,4 @@
+with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
 package body Adresse_IP is
 
      -- Fonction qui a pour but de convertir une adresse IP (binaire) en une chaine de caractère composée de quatre 
@@ -9,7 +10,7 @@ package body Adresse_IP is
 
      begin
      
-        IP := Adresse_IP + 2 ** 8;
+          IP := Adresse_IP + 2 ** 8;
 
           for i in 1..4 loop                                                          -- on boucle 4 fois pour afficher toutes les valeurs dans une adresse IP
                Str:= Str &  Integer'Image (Natural(((IP / UN_OCTET ** (4-i)) mod UN_OCTET)));
@@ -19,38 +20,35 @@ package body Adresse_IP is
           end loop;
           return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
      end Conv_IP_String;
-
--- fonction qui prend un fichier Entree et renvoie une ligne.    
-    
-     function Lire_Ligne_Espace (Entree : in File_Type) return Unbounded_String is
-     begin
-         Ligne := Entree;
-
-         for i in Entree'Range loop
-               if Entree (i) = ' ' then 
-                    Ligne := Entree (Entree'First .. i-1);
-                    Exit;
-               end if;
-          end loop;
-          return Ligne;
-     end Lire_Ligne_Espace;     
+ 
 
 -- Fonction qui permet de lire une adresse IP dans un fichier Entree et la convertir en un type T_Adresse_IP
 
      function Lire_Adresse_IP (Entree : in File_Type) return T_Adresse_IP is 
 
-         c: character;                     -- permet de traiter le "."
-         val:Integer;                      -- la valeur (ni) qui va etre convertie en binaire
-         ad_ip:T_Adresse_IP;               -- l'adresse IP convertie en binaire
+          c : character;                     -- permet de traiter le "."
+          val : Integer;                      -- la valeur (ni) qui va etre convertie en binaire
+          ad_ip : T_Adresse_IP;               -- l'adresse IP convertie en binaire
 
      begin
 
-         Line:= Lire_Ligne_Espace(Entree);
-         ad_ip := Integer'Value(Line);                       -- on récupère la valeur de n1
-         ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n2
-         ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n3
-          ad_ip := ad_ip * UN_OCTET + Integer'Value(Line);    -- on récupère la valeur de n4
-         return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
+          Get(Entree, val);
+          Put_Line("Entier lu");
+          Put(val, 3);
+          New_Line;
+          ad_ip := T_Adresse_IP(val);
+          for i in 1..3 loop
+               Get(Entree, c);
+               Put_Line("point lu");
+               Put(c);
+               New_Line;
+               Get(Entree, val);
+               Put_Line("Entier lu");
+               Put(val, 3);
+               New_Line;
+               ad_ip := ad_ip * UN_OCTET + T_Adresse_IP(val);
+          end loop;
+          return ad_ip;                     -- on renvoie l'adresse IP convertie en binaire
 
      end Lire_Adresse_IP;      
 
