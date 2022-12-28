@@ -90,34 +90,9 @@ package body Adresse_IP is
 
 
      function Comp_Destination_Paquet(Destination: in T_Adresse_IP; Masque: in T_Adresse_IP; Paquet: in T_Adresse_IP) return Boolean is 
-          
-          val2:T_Adresse_IP;
-          T:Boolean;
-          M:T_Adresse_IP;
-          i:Integer;
-          Dest2:T_Adresse_IP;
      begin
      
-          T:=True;                          -- on initialise notre T à True 
-          val2 := Paquet;                   -- on créé une copie du paquet
-          M := Masque;                      -- on créé une copie du masque 
-          i:=0;
-          Dest2:=Destination;
-          while T and then i < 4 loop                      -- tant qu'on a bien égalité entre les valeurs de destination et de paquet et que l'on n'est pas arrivé à la fin
-               if (val2 mod UN_OCTET) = (Destination mod UN_OCTET) then -- si on a egalité entre les 2 ni on ne fait rien
-                    null;
-               else                                                 
-                    if (masque mod UN_OCTET) = 0 then               -- sinon on observe la valeur du masque associée, si elle est égale à 0 on ne fait rien
-                         val2:= val2 / UN_OCTET;                    -- on modifie les valeurs des copies afin de passer aux ni suivants
-                         Dest2 := Dest2 / UN_OCTET;
-                         M:= M / UN_OCTET;
-                    else
-                         T:=False;                                  -- on change T en False car on ne respecte pas la cohérence du cache.
-                    end if;
-               end if ;
-               i:=i+1;                      -- permet d'assurer la bonne terminaison de la boucle while à la fin de la comparaison
-          end loop;
-          return T;
+          return (Paquet and Masque) = Destination;
           
      end Comp_Destination_Paquet;
           
