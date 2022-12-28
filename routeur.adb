@@ -89,20 +89,15 @@ procedure Routeur is
 begin 
      -- Traiter les options du programmes
      Traiter_Option(Taille_Cache, Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
-     Put_Line("Option traitée");
      -- Lire la table de routage dans le fichier
      Open(Entree, In_File, To_String(Fich_Table));
      Initialiser(Table_Routage);
      begin
           loop
-               Put_Line("On lit l'adresse");
                AdresseIP := Lire_Adresse_IP(Entree);
-               Put_Line("On lit le masque");
                Masque := Lire_Adresse_IP(Entree);
                Interface_eth := Get_Line(Entree);
-               Put_Line(To_String(Interface_eth));
                Trim(Interface_eth, Both);
-               Put_Line(To_String(Interface_eth));
                Ajouter(Table_Routage, AdresseIP, Masque, Interface_eth);
                exit when End_Of_File (Entree);
           end loop;
@@ -112,45 +107,39 @@ begin
                Null;
      end;
      Close(Entree);
-     Put_Line("Table créée");
      
      -- Traiter les lignes du fichier paquets
      Open(Entree, In_File, To_String(Fich_Paquets));
      Create(Sortie, Out_File, To_String(Fich_Resultats));
      i := 1;
      loop
-          Put_Line("Check routage");
           ligne := Get_Line(Entree);
           Trim(ligne, Both);
-          Put_Line("Check 1");
           if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
-               Put_Line("On a une adresse IP");
-               AdresseIP := Lire_Adresse_IP(Entree);
-               Put_Line("Adresse IP lue");
+               AdresseIP := Conv_String_IP(To_String(ligne));
                Interface_eth := Chercher_Element(Table_Routage, AdresseIP);
                Put_Line(Sortie, ligne & " " & Interface_eth);
-               Put_Line("Check 2");
           elsif To_String(ligne) = "table" then
                Put(To_String(ligne) & " (ligne");
-               Put(i, 3);
+               Put(i, 2);
                Put(")");
                New_Line;
                Afficher(Table_Routage);
           elsif To_String(ligne) = "cache" then
                Put(To_String(ligne) & " (ligne");
-               Put(i, 3);
+               Put(i, 2);
                Put(")");
                New_Line;
                Null; -- Pour le moment pas de cache
           elsif To_String(ligne) = "stat" then
                Put(To_String(ligne) & " (ligne");
-               Put(i, 3);
+               Put(i, 2);
                Put(")");
                New_Line;
                Null; -- Pour le moment pas de cache
           elsif To_String(ligne) = "fin" then
                Put(To_String(ligne) & " (ligne");
-               Put(i, 3);
+               Put(i, 2);
                Put(")");
                New_Line;
                Null;

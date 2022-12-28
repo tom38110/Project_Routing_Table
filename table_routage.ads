@@ -23,7 +23,7 @@ package Table_Routage is
         function Chercher_Element(Table : in T_Table_Routage ; Paquet: in T_Adresse_IP) return Unbounded_String;
 
         --Afficher chaque ligne de la Table de Routage
-        procedure Afficher(Table : in out T_Table_Routage);
+        procedure Afficher(Table : in T_Table_Routage);
 
 private
 
