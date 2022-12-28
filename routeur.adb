@@ -57,6 +57,7 @@ procedure Routeur is
                          Afficher_Usage;
                     end if;
                elsif Argument(i) = "-p" then
+                    i := i + 1;
                     Fich_Paquets := To_Unbounded_String(Argument(i));
                elsif Argument(i) = "-S" then
                     Stat := false;
@@ -154,4 +155,8 @@ begin
      Close(Entree);
      Close(Sortie);
      Vider(Table_Routage);
+exception
+     when others =>
+          Put_Line("Erreur dans le routage (vérifier fichier table et paquet)");
+          Null;
 end Routeur;
