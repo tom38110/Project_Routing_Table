@@ -50,7 +50,7 @@ package body Adresse_IP is
           ind_ligne_fin := 1;
           for i in 1..4 loop
                -- on cherche la fin de l'entier dans la ligne
-               while ind_ligne_fin < length(To_Unbounded_String(ligne)) and then ligne(ind_ligne_fin) /= '.' loop
+               while ind_ligne_fin < length(To_Unbounded_String(ligne)) + 1 and then ligne(ind_ligne_fin) /= '.' loop
                     ind_ligne_fin := ind_ligne_fin + 1;
                end loop;
                -- On récupère l'entier qu'on importe dans l'adresse IP

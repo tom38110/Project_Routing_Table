@@ -43,7 +43,6 @@ new Ada.Unchecked_Deallocation (Object => T_Cellule, Name => T_Table_Routage);
                 Table_parcours : T_Table_Routage := Table;
         begin
                 while Table_parcours /= Null and then not(Comp_Destination_Paquet(Table_parcours.all.Destination, Table_parcours.all.Masque, Paquet)) loop
-                        Put_Line("Check");
                         Table_parcours := Table_parcours.all.Suivante;
                 end loop;
                 return Table_parcours.all.Interface_eth;
