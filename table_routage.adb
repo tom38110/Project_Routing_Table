@@ -42,19 +42,19 @@ new Ada.Unchecked_Deallocation (Object => T_Cellule, Name => T_Table_Routage);
 
         procedure Chercher_Interface(Table : in T_Table_Routage ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String ; Cache : in out T_Cache ; Capacite_Cache : in Integer ; Politique : in T_Politique) is
                 Table_parcours : T_Table_Routage := Table;
+                Masque_Max : T_Adresse_IP := 0;
+                Destination
         begin
-                while Table_parcours /= Null and then not(Comp_Destination_Paquet(Table_parcours.all.Destination, Table_parcours.all.Masque, Paquet)) loop
+                Initialiser(Sous_Table);
+                while Table_parcours /= Null loop
+                        if Comp_Destination_Paquet(Table_parcours.all.Destination, Table_parcours.all.Masque, Paquet) and then Masque_Max <= Table_parcours.all.Masque then
+                                Interface_eth := Table_parcours.all.Interface_eth;
+                                Masque_Max := Table_parcours.all.Masque;
+                        end if;
                         Table_parcours := Table_parcours.all.Suivante;
                 end loop;
-                Interface_eth := Table_parcours.all.Interface_eth;
-                if Cache_Plein_L(Cache, Capacite_Cache) then
-                        Supprimer_ligne_L(Cache, Politique);
-                else
-                        Null;
-                end if;
-                Ajouter_C(Cache, Table_parcours.all.Destination, Table_parcours.all.Masque, Table_parcours.all.Interface_eth);
+                Maj_Cache(Cache, Capacite_Cache, Politique, Table_parcours.all.Destination, Masque_Max, Interface_eth, Paquet);
         end Chercher_Element;
-
 
 
         procedure Afficher(Table : in T_Table_Routage) is

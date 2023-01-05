@@ -20,7 +20,7 @@ package Adresse_IP is
      -- Lit l'adresse IP dans le fichier et la renvoie
      function Lire_Adresse_IP (Entree : in File_Type) return T_Adresse_IP;
 
-     -- Dis si un paquet correspond
+     -- Dis si un paquet correspond à une route
      function Comp_Destination_Paquet(Destination: in T_Adresse_IP; Masque: in T_Adresse_IP; Paquet: in T_Adresse_IP) return Boolean;
      
 end Adresse_IP;
