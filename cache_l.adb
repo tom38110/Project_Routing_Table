@@ -9,13 +9,14 @@ package body Cache_L is
 
     procedure Initialiser_L(Cache : out T_Cache_L) is
     begin
-        Cache := null;
+        Cache.Debut := Null;
+        Cache.Fin := Null;
     end Initialiser_L;
 
 
     procedure Afficher_L(Cache : in T_Cache_L) is
     begin
-        if Cache = Null then
+        if Cache.Debut = Null then
             Null;
         else
             Afficher_IP(Cache.All.Destination);

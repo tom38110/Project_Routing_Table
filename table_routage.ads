@@ -1,7 +1,10 @@
 with Ada.Strings;                  use Ada.Strings;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Adresse_IP;                   use Adresse_IP;
+with Cache_L;                      use Cache_L;
 
+generic
+        type T_Cache is private;
 package Table_Routage is
 
         type T_Table_Routage is limited private;
@@ -18,9 +21,8 @@ package Table_Routage is
         --Pointer la table de routage vers null
         procedure Initialiser(Table : out T_Table_Routage);
 
-        --Parcourir la liste chainee jusqu'a trouver l'element ayant cette adresseIP avec un masque valide
-        --Retouner l'interface de cet element
-        function Chercher_Element(Table : in T_Table_Routage ; Paquet: in T_Adresse_IP) return Unbounded_String;
+        --Trouver l'interface correspondant au paquet dans la table de routage et mettre à jour le cache en conséquence
+        procedure Chercher_Interface(Table : in T_Table_Routage ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String ; Cache : in out T_Cache ; Capacite_Cache : in Integer);
 
         --Afficher chaque ligne de la Table de Routage
         procedure Afficher(Table : in T_Table_Routage);

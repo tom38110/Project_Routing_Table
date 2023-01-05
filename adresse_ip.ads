@@ -6,6 +6,7 @@ package Adresse_IP is
 
      type T_Adresse_IP is mod 2 ** 32;
      UN_OCTET: constant T_Adresse_IP := 2 ** 8;
+     POIDS_FORT : constant T_Adresse_IP  := 2 ** 31;	 -- 10000000.00000000.00000000.00000000
 
      -- Affiche une Adresse IP sur le terminal au format "n1.n2.n3.n4"
      procedure Afficher_IP (Adresse_IP : in T_Adresse_IP);

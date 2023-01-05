@@ -20,7 +20,7 @@ package Cache_L is
     --Parcourir la file jusqu'a trouver l'element ayant cette adresseIP avec un masque valide
     --Ajouter l'element au Cache en appelant la procedure Ajouter_L
     --Creer l'interface de cet element dans le Cache
-    procedure Chercher_Element_L(Cache : in out T_Cache_L ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String);
+    procedure Chercher_Interface_L(Cache : in out T_Cache_L ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String);
 
     --Afficher chaque ligne de la Table de Routage
     procedure Afficher_L(Cache : in T_Cache_L);

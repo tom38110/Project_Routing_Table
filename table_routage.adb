@@ -1,6 +1,7 @@
 with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;                  use Ada.Text_IO;
 
+
 package body Table_Routage is
 
 
@@ -39,13 +40,19 @@ new Ada.Unchecked_Deallocation (Object => T_Cellule, Name => T_Table_Routage);
         end Initialiser;
 
 
-        function Chercher_Element(Table : in T_Table_Routage ; Paquet : in T_Adresse_IP) return Unbounded_String is
+        procedure Chercher_Interface(Table : in T_Table_Routage ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String ; Cache : in out T_Cache ; Capacite_Cache : in Integer ; Politique : in T_Politique) is
                 Table_parcours : T_Table_Routage := Table;
         begin
                 while Table_parcours /= Null and then not(Comp_Destination_Paquet(Table_parcours.all.Destination, Table_parcours.all.Masque, Paquet)) loop
                         Table_parcours := Table_parcours.all.Suivante;
                 end loop;
-                return Table_parcours.all.Interface_eth;
+                Interface_eth := Table_parcours.all.Interface_eth;
+                if Cache_Plein_L(Cache, Capacite_Cache) then
+                        Supprimer_ligne_L(Cache, Politique);
+                else
+                        Null;
+                end if;
+                Ajouter_C(Cache, Table_parcours.all.Destination, Table_parcours.all.Masque, Table_parcours.all.Interface_eth);
         end Chercher_Element;
 
 
