@@ -5,16 +5,16 @@ with Ada.Strings;                  use Ada.Strings;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;     use Ada.Text_IO.Unbounded_IO;
 with Adresse_IP;                   use Adresse_IP;
-with Cache_L;                      use Cache_L;
+with Cache_A;                      use Cache_A;
 with Table_Routage;
 
 
 -- mise en place d'un routeur avec cache.
-procedure Routeur_LL is
+procedure Routeur_LA is
 
-    package Table_Routage_L is 
-        new Table_Routage(T_Cache => T_Cache_L);
-    use Table_Routage_L;
+    package Table_Routage_A is 
+        new Table_Routage(T_Cache => T_Cache_A);
+    use Table_Routage_A;
 
     -- Affiche l'usage du programme
     procedure Afficher_Usage is
@@ -38,7 +38,7 @@ procedure Routeur_LL is
     begin
         -- Initialiser les options par défaut
         Capacite_Cache := 10;
-        Politique := FIFO;
+        Politique := LRU;
         Stat := true;
         Fich_Table := To_Unbounded_String("table.txt");
         Fich_Paquets := To_Unbounded_String("paquets.txt");
@@ -51,16 +51,8 @@ procedure Routeur_LL is
                 i := i + 1;
                 Capacite_Cache := Integer'Value(Argument(i));
             elsif Argument(i) = "-P" then
-                i := i + 1;
-                if Argument(i) = "FIFO" then
-                        Politique := FIFO;
-                elsif Argument(i) = "LRU" then
-                        Politique := LRU;
-                elsif Argument(i) = "LFU" then
-                        Politique := LFU;
-                else
-                        Afficher_Usage;
-                end if;
+                i := i + 2;
+                Put_Line("La politique du cache version Arbre préfixe est LRU");
             elsif Argument(i) = "-p" then
                 i := i + 1;
                 Fich_Paquets := To_Unbounded_String(Argument(i));
@@ -117,7 +109,7 @@ begin
     Close(Entree);
 
     -- Traiter les lignes du fichier paquets
-    Initialiser_L(Cache);
+    Initialiser_A(Cache);
     Open(Entree, In_File, To_String(Fich_Paquets));
     Create(Sortie, Out_File, To_String(Fich_Resultats));
     i := 1;
@@ -127,7 +119,7 @@ begin
     if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
         AdresseIP := Conv_String_IP(To_String(ligne));
         begin
-            Interface_eth := Chercher_Interface_L(Cache, AdresseIP);
+            Interface_eth := Chercher_Interface_A(Cache, AdresseIP);
         exception
             when Interface_Absente_Cache =>
                 Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Cache, Capacite_Cache);
@@ -144,14 +136,14 @@ begin
         Put(i, 2);
         Put(")");
         New_Line;
-        Afficher_L(Cache);
+        Afficher_A(Cache);
     elsif To_String(ligne) = "stat" then
         if Stat then
             Put(To_String(ligne) & " (ligne");
             Put(i, 2);
             Put(")");
             New_Line;
-            Afficher_Stat_L(Cache);
+            Afficher_Stat_A(Cache);
         else
             Null;
         end if;
@@ -171,9 +163,9 @@ begin
     Close(Entree);
     Close(Sortie);
     Vider(Table_Routage);
-    Vider_L(Cache);
+    Vider_A(Cache);
 exception
     when others =>
     Put_Line("Erreur dans le routage (vérifier fichier table et paquet)");
     Null;
-end Routeur_LL;
+end Routeur_LA;
