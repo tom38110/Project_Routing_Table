@@ -11,9 +11,6 @@ package Adresse_IP is
      -- Affiche une Adresse IP sur le terminal au format "n1.n2.n3.n4"
      procedure Afficher_IP (Adresse_IP : in T_Adresse_IP);
 
-     -- Convertir une Adresse IP (binaire) en ligne (string) au format "n1.n2.n3.n4"
-     function Conv_IP_String (Adresse_IP : in T_Adresse_IP) return Unbounded_String;
-
      -- Converti une ligne au format "n1.n2.n3.n4" en une adresse IP
      function Conv_String_IP (ligne : in String) return T_Adresse_IP;
      
@@ -22,5 +19,8 @@ package Adresse_IP is
 
      -- Dis si un paquet correspond à une route
      function Comp_Destination_Paquet(Destination: in T_Adresse_IP; Masque: in T_Adresse_IP; Paquet: in T_Adresse_IP) return Boolean;
+
+     -- Renvoie vrai si le ieme bit de Adresse_IP vaut 1
+     function Ie_Bit_A_1(Adresse_IP : in T_Adresse_IP; i : in Integer) return Boolean;
      
 end Adresse_IP;

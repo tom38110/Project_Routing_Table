@@ -18,25 +18,6 @@ package body Adresse_IP is
      end Afficher_IP;
 
 
-     function Conv_IP_String (Adresse_IP: in T_Adresse_IP) return Unbounded_String is
-
-          IP: T_Adresse_IP;                                -- Adresse IP copie qui permet d'afficher l'adresse IP sans modifier l'origiinale
-          Str: unbounded_string;                           -- Adresse IP convertie sous forme de chaine de caractère
-
-     begin
-     
-          IP := Adresse_IP + 2 ** 8;
-
-          for i in 1..4 loop                                                          -- on boucle 4 fois pour afficher toutes les valeurs dans une adresse IP
-               Str:= Str &  Integer'Image (Natural(((IP / UN_OCTET ** (4-i)) mod UN_OCTET)));
-               while i/=4 loop                                                             -- permet d'afficher les "." juste après les 3 premières valeurs
-                    Str:= Str & ".";
-               end loop;
-          end loop;
-          return Str;                                                                  -- on renvoie l'adresse IP convertie sous forme de chaine de caractère
-     end Conv_IP_String;
-
-
      function Conv_String_IP (ligne : in String) return T_Adresse_IP is
 
           ad_ip : T_Adresse_IP;    -- Adresse IP correspondant à la ligne
@@ -95,5 +76,11 @@ package body Adresse_IP is
           return (Paquet and Masque) = Destination;
           
      end Comp_Destination_Paquet;
+
+
+     function Ie_Bit_A_1(Adresse_IP : in T_Adresse_IP; i : in Integer) return Boolean is
+     begin
+          return Adresse_IP and (2**(32 - i)) /= 0;
+     end Ie_Bit_A_1;
           
 end Adresse_IP;

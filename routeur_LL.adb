@@ -12,10 +12,6 @@ with Table_Routage;
 -- mise en place d'un routeur avec cache.
 procedure Routeur_LL is
 
-    package Table_Routage_L is 
-        new Table_Routage(T_Cache => T_Cache_L);
-    use Table_Routage_L;
-
     -- Affiche l'usage du programme
     procedure Afficher_Usage is
     begin
@@ -81,6 +77,10 @@ procedure Routeur_LL is
         end loop;
     end Traiter_Option;
 
+    package Table_Routage_L is 
+        new Table_Routage(T_Cache => T_Cache_L);
+    use Table_Routage_L;
+
     Capacite_Cache : Integer; -- Capacité maximale du cache
     Fich_Table, Fich_Paquets, Fich_Resultats : Unbounded_String; -- Noms des fichiers à gérer
     Stat : Boolean; -- Afficher les stats du cache ou non
@@ -93,6 +93,7 @@ procedure Routeur_LL is
     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
     Entree : File_Type; -- Le descripteur du fichier d'entrée
     Sortie : File_Type; -- Le descripteur du fichier de sortie
+
 begin 
     -- Traiter les options du programmes
     Traiter_Option(Capacite_Cache, Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);
@@ -174,6 +175,6 @@ begin
     Vider_L(Cache);
 exception
     when others =>
-    Put_Line("Erreur dans le routage (vérifier fichier table et paquet)");
-    Null;
+        Put_Line("Erreur dans le routage (vérifier fichier table et paquet)");
+        Null;
 end Routeur_LL;
