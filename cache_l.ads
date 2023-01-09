@@ -11,7 +11,7 @@ package Cache_L is
     -- Type énuméré de la politique du cache
     type T_Politique is (FIFO, LRU, LFU);
 
-    --Ajouter l'adresseIP, le masque et l'interface dans le cache
+    --Ajouter à la fin du Cache l'adresseIP, le masque et l'interface dans le cache
     procedure Ajouter_C(Cache : in out T_Cache_L ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String);
 
     --Pointer le cache vers null
@@ -20,7 +20,7 @@ package Cache_L is
     --Parcourir la file jusqu'a trouver l'element ayant cette adresseIP avec un masque valide
     --Ajouter l'element au Cache en appelant la procedure Ajouter_L
     --Creer l'interface de cet element dans le Cache
-    procedure Chercher_Interface_L(Cache : in out T_Cache_L ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String);
+    procedure Chercher_Element_L(Table : in T_Table_Routage; Cache : in out T_Cache_L ; Paquet: in T_Adresse_IP ; Interface_eth : out Unbounded_String ; Politique : T_Politique);
 
     --Afficher chaque ligne de la Table de Routage
     procedure Afficher_L(Cache : in T_Cache_L);
@@ -39,7 +39,7 @@ package Cache_L is
 
     --Vide le cache suivant la politique
     function Supprimer_ligne_L(Cache : in T_Cache_L; Politique : in T_Politique) return T_Cache_L;
-
+    --Pre_cond => Cache_Plein_L(Cache : in T_Cache_L; Taille_Max : in Integer)
 
 private
 
