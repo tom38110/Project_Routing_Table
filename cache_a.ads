@@ -1,9 +1,6 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Adresse_IP; use Adresse_IP;
 
-generic
-    
-CAPACITE: Integer; 
 
 package Cache_A is
 

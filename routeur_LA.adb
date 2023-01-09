@@ -5,12 +5,16 @@ with Ada.Strings;                  use Ada.Strings;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;     use Ada.Text_IO.Unbounded_IO;
 with Adresse_IP;                   use Adresse_IP;
-with Cache_A;
+with Cache_A;                      use Cache_A;
 with Table_Routage;
 
 
 -- mise en place d'un routeur avec cache.
 procedure Routeur_LA is
+
+    package Table_Routage_A is 
+        new Table_Routage(T_Cache => T_Cache_A);
+    use Table_Routage_A;
 
     -- Affiche l'usage du programme
     procedure Afficher_Usage is
@@ -81,14 +85,6 @@ procedure Routeur_LA is
     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
     Entree : File_Type; -- Le descripteur du fichier d'entrée
     Sortie : File_Type; -- Le descripteur du fichier de sortie
-    
-    package Cache_AC is
-        new Cache_A (CAPACITE => Capacite_Cache);
-    use Cache_AC;
-
-    package Table_Routage_A is 
-        new Table_Routage(T_Cache => T_Cache_A);
-    use Table_Routage_A;
 
 begin 
     -- Traiter les options du programmes

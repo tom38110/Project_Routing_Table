@@ -25,25 +25,23 @@ package body Cache_A is
         if Est_Vide(Cache) then
             Cache:= new T_Cellule'(Destination,Masque,Interface,null,null);
         else
-            while (Dest_Copie and POIDS_FORT) = (Cache.all.Destination and POIDS_FORT) loop  
-                if (Dest_Copie and POIDS_FORT) /=0 then
-                    if not(Est_Feuille(Cache)) then
-                        Ajouter_C(cache.all.Suivant_D,null,null,null);
-                        Dest_Copie := Dest_Copie*2;
-                    else
-                        cache.all.Suivant_D:=Noeud(null,null,null);
-                        Ajouter_C(cache.all.Suivant_D,Destination,Masque,Interface);                 
-                    end if;        
+            if (Dest_Copie and POIDS_FORT) /=0 then
+                if not(Est_Feuille(Cache)) then
+                    Ajouter_C(cache.all.Suivant_D,null,null,null);
+                    Dest_Copie := Dest_Copie*2;
                 else
-                    if not(Est_Feuille(Cache)) then
-                        Ajouter_C(cache.all.Suivant_G,null,null,null);
-                        Dest_Copie := Dest_Copie*2;
-                    else
-                        cache.all.Suivant_G:=Noeud(null,null,null);
-                        Ajouter_C(cache.all.Suivant_G,Destination,Masque,Interface);
-                    end if;
+                    cache.all.Suivant_D:=Noeud(null,null,null);
+                    Ajouter_C(cache.all.Suivant_D,Destination,Masque,Interface);                 
+                end if;        
+            else
+                if not(Est_Feuille(Cache)) then
+                    Ajouter_C(cache.all.Suivant_G,null,null,null);
+                    Dest_Copie := Dest_Copie*2;
+                else
+                    cache.all.Suivant_G:=Noeud(null,null,null);
+                    Ajouter_C(cache.all.Suivant_G,Destination,Masque,Interface);
                 end if;
-            end loop;
+            end if;
 
                             -- SUREMENT RAJOUTER QQCHOSE
         end if;
@@ -106,7 +104,7 @@ package body Cache_A is
     begin
         Paternel:=Pere(Cache,Destination);
         if Est_Vide(Cache) then
-            raise ElementAbsentERROR;
+            Null;
         else
             if Nb_Fils(Paternel)=1 then
                 if Cache.all.Destination = Destination then
@@ -232,3 +230,6 @@ end Masque_Max;
 
 -- faire une procÃ©dure MAJ_Cache(Cache: in out T_Cache_A; Capacite_max : in Integer; Politique: in T_Politique; 
 -- Destination: in T_Adresse_IP,Masque: in T_Adresse_IP,Interface: in Unbounded_String; paquet: in T_Adresse_IP)
+-- Afficher_A
+-- Afficher_Stat_A
+-- Vider_A

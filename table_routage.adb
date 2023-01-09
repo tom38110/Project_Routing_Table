@@ -43,7 +43,6 @@ new Ada.Unchecked_Deallocation (Object => T_Cellule, Name => T_Table_Routage);
                 Table_parcours : T_Table_Routage := Table;
                 Masque_Max : T_Adresse_IP := 0;
         begin
-                Initialiser(Sous_Table);
                 while Table_parcours /= Null loop
                         if Comp_Destination_Paquet(Table_parcours.all.Destination, Table_parcours.all.Masque, Paquet) and then Masque_Max <= Table_parcours.all.Masque then
                                 Interface_eth := Table_parcours.all.Interface_eth;
