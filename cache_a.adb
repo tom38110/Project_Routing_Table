@@ -64,7 +64,7 @@ package body Cache_A is
         end loop;
     end Classer_Pre;    
 
-    -- Donne la taille du cache.
+    -- Donne la taille du cache. (Attention condition feuille)
     function Nb_Element(Cache:in T_Cache_A) return Integer is
     begin
         if Cache = null then
@@ -88,7 +88,7 @@ package body Cache_A is
         end if;
     end IP_Presente;
 
-    -- Decrocher le plus petit Ã©lement du Cache.
+    -- Decrocher le plus petit Ã©lement du Cache. (inutile)
     procedure Decrocher_Min(Cache: in out T_Cache_A; Min: out T_Cache_A) is 
     begin
         if Cache.all.Suivant_G= null then
@@ -110,7 +110,7 @@ package body Cache_A is
         else
             if Nb_Fils(Paternel)=1 then
                 if Cache.all.Destination = Destination then
-                    Free (Cache.all.Destination);
+                    Free (Cache);
                     Free(Paternel);
                 else
                     Supprimer(Cache.all.Suivant_D,Destination);
@@ -118,7 +118,7 @@ package body Cache_A is
                 end if;
             elsif Nb_Fils(Paternel)=2 then
                 if Cache.all.Destination = Destination then
-                    Free (Cache.all.Destination);
+                    Free (Cache);
                 else
                     Supprimer(Cache.all.Suivant_D,Destination);
                     Supprimer(Cache.all.Suivant_G,Destination);
@@ -140,7 +140,7 @@ package body Cache_A is
     end Chercher;
 
     -- Comparer le prÃ©fixe aux feuilles.
-    function Comparer(prefixe:in T_Adresse_IP; feuille:in T_Adresse_IP) return Boolean is
+    function Comparer(prefixe:in T_Adresse_IP; feuille:in T_Cache_A) return Boolean is
     begin 
         return prefixe = feuille.all.Destination ;
     end Comparer;
@@ -163,10 +163,10 @@ package body Cache_A is
     -- VÃ©rifie si on se trouve sur une feuille.
     function Est_Feuille(Cellule :in T_Cache_A) return Boolean is
     begin
-        return (Cellule.all.Suivant_D and Celulle.all.Suivant_D) = null;
+        return Cellule.all.Suivant_D = null and Celulle.all.Suivant_D = null;
     end Est_Feuille;
 
-    -- Renvoie le pÃ¨re de la feuille souhaitÃ©.
+    -- Renvoie le pÃ¨re de la feuille souhaitÃ©. (gérer si cache null)
     function Pere(Cache:in T_Cache_A; Feuille: in T_Adresse_IP) return T_Cellule is
         Sous_Cache_D : T_Cache_A;
         Sous_Cache_G : T_Cache_A;
@@ -187,9 +187,9 @@ package body Cache_A is
     begin
 
         NbFils:=0;
-        if Pere.all.Suivant_D /=null then
+        if Pere.Suivant_D /=null then
             NbFils:=NbFils+1;
-        elsif Pere.all.Suivant_G /=null then
+        elsif Pere.Suivant_G /=null then
             NbFils:=NbFils+1;
         end if;
         return NbFils;
@@ -200,10 +200,10 @@ package body Cache_A is
         i:Integer;
     begin
         i:=0;
-        if Tableau(i+1).all.Destination /= null then
+        if Tableau(i+1).Destination /= null then
             i:=i+1;
         else
-            return Tableau(i).all.Destination;
+            return Tableau(i).Destination;
         end if;
 
     end Plus_Ancien;
@@ -216,11 +216,11 @@ package body Cache_A is
     begin 
         ind:=1;
         i:=1;
-        max:= Tableau(1).all.Masque;
-        while Tableau(i+1).all.Destination /= null loop
+        max:= Tableau(1).Masque;
+        while Tableau(i+1).Destination /= null loop
             i:=i+1;
-            if Tableau(i).all.Masque > max then
-                max:=Tableau(i).all.Masque;
+            if Tableau(i).Masque > max then
+                max:=Tableau(i).Masque;
                 ind:=i;
             end if;
         end loop;

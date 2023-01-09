@@ -73,7 +73,7 @@ procedure Routeur_LA is
     Fich_Table, Fich_Paquets, Fich_Resultats : Unbounded_String; -- Noms des fichiers à gérer
     Stat : Boolean; -- Afficher les stats du cache ou non
     Table_Routage : T_Table_Routage; -- Table de routage
-    Cache : T_Cache_L; -- Cache sous forme d'une liste chaînée
+    Cache : T_Cache_A; -- Cache sous forme d'une liste chaînée
     Politique : T_Politique; -- Politique du cache
     i : Integer; -- Compteur de ligne dans le fichier des paquets
     ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
@@ -89,7 +89,7 @@ procedure Routeur_LA is
     package Table_Routage_A is 
         new Table_Routage(T_Cache => T_Cache_A);
     use Table_Routage_A;
-    
+
 begin 
     -- Traiter les options du programmes
     Traiter_Option(Capacite_Cache, Fich_Table, Fich_Paquets, Fich_Resultats, Politique, Stat);

@@ -88,7 +88,7 @@ private
         end record;
 
 
-    Type T_tab is array[1..CAPACITE] of T_Route;
+    
     Type T_Route is
         record
             Destination: T_Adresse_IP;
@@ -96,6 +96,6 @@ private
             Interface: Unbounded_String;
 
         end record;
-
+    Type T_tab is array[1..CAPACITE] of T_Route;
 
 end Cache_A;
