@@ -12,6 +12,10 @@ with Table_Routage;
 -- mise en place d'un routeur avec cache.
 procedure Routeur_LL is
 
+    package Table_Routage_L is 
+        new Table_Routage(T_Cache => T_Cache_L);
+    use Table_Routage_L;
+
     -- Affiche l'usage du programme
     procedure Afficher_Usage is
     begin
@@ -77,10 +81,6 @@ procedure Routeur_LL is
         end loop;
     end Traiter_Option;
 
-    package Table_Routage_L is 
-        new Table_Routage(T_Cache => T_Cache_L);
-    use Table_Routage_L;
-
     Capacite_Cache : Integer; -- Capacité maximale du cache
     Fich_Table, Fich_Paquets, Fich_Resultats : Unbounded_String; -- Noms des fichiers à gérer
     Stat : Boolean; -- Afficher les stats du cache ou non
@@ -131,7 +131,7 @@ begin
             Interface_eth := Chercher_Interface_L(Cache, AdresseIP);
         exception
             when Interface_Absente_Cache =>
-                Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Cache, Capacite_Cache);
+                Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Cache, Capacite_Cache, Politique);
         end;
         Put_Line(Sortie, ligne & " " & Interface_eth);
     elsif To_String(ligne) = "table" then
@@ -152,7 +152,7 @@ begin
             Put(i, 2);
             Put(")");
             New_Line;
-            Afficher_Stat_L(Cache);
+            Afficher_Stat_L(Cache, Capacite_Cache, Politique);
         else
             Null;
         end if;
