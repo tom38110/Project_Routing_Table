@@ -30,8 +30,9 @@ package body Cache_A is
                     Ajouter_C(cache.all.Suivant_D,null,null,null);
                     Dest_Copie := Dest_Copie*2;
                 else
-                    cache.all.Suivant_D:=Noeud(null,null,null);
-                    Ajouter_C(cache.all.Suivant_D,Destination,Masque,Interface);                 
+
+                    --cache.all.Suivant_D:=Noeud(null,null,null);
+                    --Ajouter_C(cache.all.Suivant_D,Destination,Masque,Interface);                 
                 end if;        
             else
                 if not(Est_Feuille(Cache)) then
@@ -164,19 +165,22 @@ package body Cache_A is
         return Cellule.all.Suivant_D = null and Celulle.all.Suivant_D = null;
     end Est_Feuille;
 
-    -- Renvoie le pÃ¨re de la feuille souhaitÃ©. (gérer si cache null)
+    -- Renvoie le pÃ¨re de la feuille souhaitÃ©. (gérer si le cache est nul)
     function Pere(Cache:in T_Cache_A; Feuille: in T_Adresse_IP) return T_Cellule is
         Sous_Cache_D : T_Cache_A;
         Sous_Cache_G : T_Cache_A;
     begin
         Sous_Cache_D:=Cache.all.Suivant_D;
         Sous_Cache_G:=Cache.all.Suivant_G;
-        if (Sous_Cache_D.all.Destination or Sous_Cache_G.all.Destination ) = Feuille then
-            return Cache;
-        else 
-            return (Pere(Cache.all.Suivant_D,Feuille) or Pere(Cache.all.Suivant_G,Feuille));
+        if Est_Vide(Cache) then
+            null;
+        else
+            if (Sous_Cache_D.all.Destination or Sous_Cache_G.all.Destination ) = Feuille then
+                return Cache;
+            else 
+                return (Pere(Cache.all.Suivant_D,Feuille) or Pere(Cache.all.Suivant_G,Feuille));
+            end if;
         end if;
-        
     end Pere;
 
     -- Renvoie le nombre de fils d'un PÃ¨re.
@@ -192,6 +196,35 @@ package body Cache_A is
         end if;
         return NbFils;
     end Nb_Fils;
+
+    procedure Afficher_A(Cache : in T_Cache_A) is
+    begin
+        if Cache = Null then
+                Null;
+        else
+                Afficher_IP(Cache.All.Destination);
+                Put(" ");
+                Afficher_IP(Cache.All.Masque);
+                Put(" ");
+                Put_Line(To_String(Cache.All.Interface));
+                Afficher_A(Cache.All.Suivant_D);
+                Afficher_A(Cache.All.Suivant_G);
+        end if;
+    end Afficher_A;
+
+    -- Affiche les différentes statistiques du cache.
+    procedure Afficher_Stat_A(Cache: in T_Cache_A; Capacite_max:in Integer) is 
+        N: Integer;
+    begin
+        N:= Nb_Element(Cache);
+        Put_Line("La poltique est LRU.");
+        Put("Il y a ");
+        Put(N,1)
+        Put_Line("élements dans le cache.");
+        Put("La Capacité maximale du cache est ");
+        Put(Capacite_max);
+        Put_Line(".");
+    end Afficher_Stat_A;
 
     -- Renvoie la destination du cache qui a Ã©tÃ© utilisÃ©e le moins rÃ©cemment.
     function Plus_Ancien(Tableau: in T_tab) return T_Adresse_IP is
@@ -226,7 +259,12 @@ package body Cache_A is
 
 end Masque_Max;
 
+-- Vide totalement le cache.
+-- copier le code supprimer du TD oklmus bingus
 
+procedure MAJ_Cache(Cache: in out T_Cache_A; Capacite_max : in Integer; Politique: in T_Politique; Destination: in T_Adresse_IP,Masque: in T_Adresse_IP,Interface: in Unbounded_String; paquet: in T_Adresse_IP) is
+begin 
+end MAJ_Cache;
 
 -- faire une procÃ©dure MAJ_Cache(Cache: in out T_Cache_A; Capacite_max : in Integer; Politique: in T_Politique; 
 -- Destination: in T_Adresse_IP,Masque: in T_Adresse_IP,Interface: in Unbounded_String; paquet: in T_Adresse_IP)

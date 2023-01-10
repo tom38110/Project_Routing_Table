@@ -57,6 +57,11 @@ package Cache_A is
     -- Renvoie le nombre de fils d'un PÃ¨re.
     function Nb_Fils(Pere: in T_Cellule) return Integer;
 
+    -- Affiche le cache sous la forme "Destination  Masque  Interface".
+    procedure Afficher_A(Cache : in T_Cache_A);
+
+    -- Affiche les différentes statistiques du cache.
+    procedure Afficher_Stat_A(Cache: in T_Cache_A; Capacite_max:in Integer);
 
     ------------------------
     -- CohÃ©rence du cache --
