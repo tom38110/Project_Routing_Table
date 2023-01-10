@@ -82,5 +82,28 @@ package body Adresse_IP is
      begin
           return Adresse_IP and (2**(32 - i)) /= 0;
      end Ie_Bit_A_1;
+
+
+     function Trouver_Ie_Bit_Diff(IP1 : in T_Adresse_IP; IP2 : in T_Adresse_IP) return Integer is
+          Masque : T_Adresse_IP := POIDS_FORT;
+          Ie_bit : integer := 1;
+     begin
+          while IP1 and Masque = IP2 and Masque loop
+               Ie_bit := Ie_bit + 1;
+               Masque := Masque / 2;
+          end loop;
+     end Trouver_Ie_Bit_Diff;
+
+
+     procedure Mise_A_1(Adresse_IP : in out T_Adresse_IP; n : in Integer) is
+     begin
+          for i in 1..n loop
+               if Ie_Bit_A_1(Adresse_IP, i) then
+                    Null;
+               else
+                    Adresse_IP := Adresse_IP + 2**(32 - i);
+               end if;
+          end loop;
+     end Mise_A_1;
           
 end Adresse_IP;

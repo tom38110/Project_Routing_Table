@@ -23,4 +23,9 @@ package Adresse_IP is
      -- Renvoie vrai si le ieme bit de Adresse_IP vaut 1
      function Ie_Bit_A_1(Adresse_IP : in T_Adresse_IP; i : in Integer) return Boolean;
      
+     -- Trouve l'indice du premier bit différent entre les 2 adresses IP en partant de la gauche
+     function Trouver_Ie_Bit_Diff(IP1 : in T_Adresse_IP; IP2 : in T_Adresse_IP) return Integer;
+
+     -- Met les n bits en partant de la gauche à 1
+     procedure Mise_A_1(Adresse_IP : in out T_Adresse_IP; n : in Integer);
 end Adresse_IP;
