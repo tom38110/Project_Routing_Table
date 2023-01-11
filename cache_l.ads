@@ -9,6 +9,7 @@ package Cache_L is
     type T_File is limited private;
 
     Interface_Absente_Cache : exception;
+    Ligne_Presente_Cache : exception;
 
     -- Type énuméré de la politique du cache
     type T_Politique is (FIFO, LRU, LFU);
@@ -20,26 +21,28 @@ package Cache_L is
     procedure Initialiser_L(Cache : out T_Cache_L);
 
     -- Chercher une interface correspondant au paquet dans le cache, lève une exception Interface_Absente_Cache si pas trouvé
-    function Chercher_Interface_L(Cache : in out T_Cache_L ; Paquet: in T_Adresse_IP) return Unbounded_String;
+    function Chercher_Interface_L(Cache : in T_Cache_L ; Paquet: in T_Adresse_IP) return Unbounded_String;
 
     --Afficher chaque ligne de la Table de Routage
     procedure Afficher_L(Cache : in T_Cache_L);
 
     --Afficher la statistique du cache
-    procedure Afficher_Stat_L(Cache : in T_Cache_L; Capacite_Cache : in Integer; Politique : in T_Politique);
+    procedure Afficher_Stat_L(Cache : in T_Cache_L; Capacite_Max : in Integer; Politique : in T_Politique);
 
     --Voir si le cache est plein
-    function Cache_Plein_L(Cache : in T_Cache_L; Taille_Max : in Integer) return Boolean;
+    function Cache_Plein_L(Cache : in T_Cache_L; Capacite_Max : in Integer) return Boolean;
 
     --Renvoie la taille du cache
     function Taille_L(Cache : in T_Cache_L) return Integer;
 
-    --Savoir si la ligne est présente dans le cache
-    function Ligne_Presente_L(Cache : in T_Cache_L; Ligne : in String) return Boolean;
+    --Mettre à jour le Cache : ajoute les données correctes dans le Cache (Paquet  Masque_Coherent  Interface_Coherente) selon la Politique et supprime un element selon la Politique
+    function Maj_Cache(Cache : in out T_Cache_L; Masque_Coherent : in T_Adresse_IP; Interface_Coherente : in Unbounded_String; Paquet: in T_Adresse_IP; Capacite_Max : in Integer; Politique : in T_Politique) return T_Cache_L
+    with Pre => not(Ligne_Presente_L(Cache));
+
 
     -- Supprime une ligne du cache suivant la politique
-    function Supprimer_ligne_L(Cache : in T_Cache_L; Politique : in T_Politique) return T_Cache_L;
-    --Pre_cond => Cache_Plein_L(Cache : in T_Cache_L; Taille_Max : in Integer)
+    function Supprimer_ligne_L(Cache : in out T_Cache_L; Politique : in T_Politique) return T_Cache_L
+    with Pre => Cache_Plein_L(Cache, Capacite_Max);
 
     -- Vide le cache
     procedure Vider_L(Cache : in out T_Cache_L);
