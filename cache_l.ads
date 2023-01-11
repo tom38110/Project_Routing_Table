@@ -57,15 +57,16 @@ private
         record
             Destination: T_Adresse_IP;
             Masque: T_Adresse_IP;
-            Interface_eth: Unbounded_String;
-            Nb_utilisation: Integer;            
+            Interface_eth: Unbounded_String;           
             Suivante: T_Ptr_Cellule;
+            Nb_utilisation: Integer; 
         end record;
 
     type T_Cache_L is      
         record
             Debut: T_Ptr_Cellule;
             Fin: T_Ptr_Cellule;
+            Nb_elem : Integer;
         end record;
 
 end Cache_L;

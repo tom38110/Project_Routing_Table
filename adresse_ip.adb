@@ -80,7 +80,7 @@ package body Adresse_IP is
 
      function Ie_Bit_A_1(Adresse_IP : in T_Adresse_IP; i : in Integer) return Boolean is
      begin
-          return Adresse_IP and (2**(32 - i)) /= 0;
+          return (Adresse_IP and (2**(32 - i))) /= 0;
      end Ie_Bit_A_1;
 
 
@@ -88,10 +88,11 @@ package body Adresse_IP is
           Masque : T_Adresse_IP := POIDS_FORT;
           Ie_bit : integer := 1;
      begin
-          while IP1 and Masque = IP2 and Masque loop
+          while (IP1 and Masque) = (IP2 and Masque) loop
                Ie_bit := Ie_bit + 1;
                Masque := Masque / 2;
           end loop;
+          return Ie_bit;
      end Trouver_Ie_Bit_Diff;
 
 

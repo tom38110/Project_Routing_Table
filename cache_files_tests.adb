@@ -1,4 +1,4 @@
-    with Cache_L;           use Cache_L;
+with Cache_L;           use Cache_L;
 
 
     procedure Cache_files_tests is
