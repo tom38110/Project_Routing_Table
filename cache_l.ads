@@ -20,8 +20,8 @@ package Cache_L is
     --Pointer le cache vers null
     procedure Initialiser_L(Cache : out T_Cache_L);
 
-    -- Chercher une interface correspondant au paquet dans le cache, lève une exception Interface_Absente_Cache si pas trouvé
-    function Chercher_Interface_L(Cache : in T_Cache_L ; Paquet: in T_Adresse_IP) return Unbounded_String;
+    -- Chercher une interface correspondant au paquet dans le cache (modifie le cache en conséquence), lève une exception Interface_Absente_Cache si pas trouvé
+    procedure Chercher_Interface_L(Cache : in out T_Cache_L ; Paquet : in T_Adresse_IP ; Politique : in T_Politique ; Interface_eth : in out Unbounded_String);
 
     --Afficher chaque ligne de la Table de Routage
     procedure Afficher_L(Cache : in T_Cache_L);
@@ -36,13 +36,10 @@ package Cache_L is
     function Taille_L(Cache : in T_Cache_L) return Integer;
 
     --Mettre à jour le Cache : ajoute les données correctes dans le Cache (Paquet  Masque_Coherent  Interface_Coherente) selon la Politique et supprime un element selon la Politique
-    function Maj_Cache(Cache : in out T_Cache_L; Masque_Coherent : in T_Adresse_IP; Interface_Coherente : in Unbounded_String; Paquet: in T_Adresse_IP; Capacite_Max : in Integer; Politique : in T_Politique) return T_Cache_L
-    with Pre => not(Ligne_Presente_L(Cache));
-
+    procedure Maj_Cache(Cache : in out T_Cache_L; Masque_Coherent : in T_Adresse_IP; Interface_Coherente : in Unbounded_String; Paquet: in T_Adresse_IP; Capacite_Max : in Integer; Politique : in T_Politique);
 
     -- Supprime une ligne du cache suivant la politique
-    function Supprimer_ligne_L(Cache : in out T_Cache_L; Politique : in T_Politique) return T_Cache_L
-    with Pre => Cache_Plein_L(Cache, Capacite_Max);
+    procedure Supprimer_ligne_L(Cache : in out T_Cache_L; Politique : in T_Politique);
 
     -- Vide le cache
     procedure Vider_L(Cache : in out T_Cache_L);

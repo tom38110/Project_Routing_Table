@@ -81,6 +81,19 @@ procedure Routeur_LL is
         end loop;
     end Traiter_Option;
 
+    procedure Afficher_Stats(Nb_defaut_cache : in Integer ; Nb_demande_route : in Integer) is
+    begin
+        Put("Nombre de défauts de cache : ");
+        Put(Nb_defaut_cache, 1);
+        New_Line;
+        Put("Nombre de demandes de route : ");
+        Put(Nb_demande_route, 1);
+        New_Line;
+        Put("Taux de défaut de cache : ");
+        Put(Float(Nb_defaut_cache)/Float(Nb_demande_route));
+        New_Line;
+    end Afficher_Stats;
+
     Capacite_Cache : Integer; -- Capacité maximale du cache
     Fich_Table, Fich_Paquets, Fich_Resultats : Unbounded_String; -- Noms des fichiers à gérer
     Stat : Boolean; -- Afficher les stats du cache ou non
@@ -88,6 +101,8 @@ procedure Routeur_LL is
     Cache : T_Cache_L; -- Cache sous forme d'une liste chaînée
     Politique : T_Politique; -- Politique du cache
     i : Integer; -- Compteur de ligne dans le fichier des paquets
+    Nb_defaut_cache : Integer; -- Nombre de défauts de cache
+    Nb_demande_route : Integer; -- Nombre de demandes de routes
     ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
     AdresseIP, Masque : T_Adresse_IP; -- Adresse IP et Masque à gérer
     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
@@ -121,6 +136,8 @@ begin
     Initialiser_L(Cache);
     Open(Entree, In_File, To_String(Fich_Paquets));
     Create(Sortie, Out_File, To_String(Fich_Resultats));
+    Nb_defaut_cache := 0;
+    Nb_demande_route := 0;
     i := 1;
     loop
     ligne := Get_Line(Entree);
@@ -131,9 +148,11 @@ begin
             Interface_eth := Chercher_Interface_L(Cache, AdresseIP);
         exception
             when Interface_Absente_Cache =>
+                Nb_defaut_cache := Nb_defaut_cache + 1;
                 Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Cache, Capacite_Cache, Politique);
         end;
         Put_Line(Sortie, ligne & " " & Interface_eth);
+        Nb_demande_route := Nb_demande_route + 1;
     elsif To_String(ligne) = "table" then
         Put(To_String(ligne) & " (ligne");
         Put(i, 2);
@@ -152,6 +171,7 @@ begin
             Put(i, 2);
             Put(")");
             New_Line;
+            Afficher_Stats(Nb_defaut_cache, Nb_demande_route);
             Afficher_Stat_L(Cache, Capacite_Cache, Politique);
         else
             Null;

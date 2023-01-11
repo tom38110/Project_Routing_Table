@@ -121,74 +121,25 @@ package body Cache_L is
         return compteur_min;
     end Chercher_Compteur_Min;
 
-
-    --nom: Ligne_Presente_L
-    --but: retourne True si la ligne (Destination  Masque  Interface_eth) est présente dans le cache
-    --paramètres: - Cache         -> le Cache a parcourir
-    --            - Destination   -> la destination de la donnée que l'on recherche
-    --            - Masque        -> le Masque de la donnée que l'on recherche
-    --            - Interface_eth -> l'Interface de la donnée que l'on recherche
-    --Aucune condition
-    function Ligne_Presente_L(Cache : in T_Cache_L;  Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String) return Boolean is
-        Cache_parcours : T_Ptr_Cellule := Cache.Debut;
-    begin
-        while Cache_parcours /= Null loop
-            if (Cache_parcours.All.Suivante.Destination = Destination) and then (Cache_parcours.All.Suivante.Masque = Masque) and then (Cache_parcours.All.Suivante.Interface_eth = Interface_eth) then
-                return True;
-            else
-                Cache_parcours := Cache_parcours.All.Suivante;
-            end if;
-        end loop;
-        return False;
-    end Ligne_Presente_L;
-
     
     procedure Maj_Cache(Cache : in out T_Cache_L; Masque_Coherent : in T_Adresse_IP; Interface_Coherente : in Unbounded_String; Paquet: in T_Adresse_IP; Capacite_Max : in Integer; Politique : in T_Politique) is
-        Detruire : T_Ptr_Cellule;
     begin
-
         if Cache_Plein_L(Cache, Capacite_Max) then
             Supprimer_ligne_L(Cache, Politique);
         else
             null;
-        end if;
-            
-        if Politique = FIFO and then not(Ligne_Presente_L(Cache, Paquet, Masque_Coherent, Interface_Coherente)) then
+        end if;   
+        if Politique = FIFO or LRU then
             Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-
-        elsif Politique = LRU then
-            if not(Ligne_Presente_L(Cache, Paquet, Masque_Coherent, Interface_Coherente)) then
-                Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-            else
-                --Si la ligne est deja dans le cache, on la supprime pour la mettre a la fin de la file
-                while (not(Cache.Debut.All.Suivante.Destination = Paquet) and then not(Cache.Debut.All.Suivante.Masque = Masque_Coherent) and then not(Cache.Debut.All.Suivante.Interface_eth = Interface_Coherente)) loop
-                    Cache.Debut := Cache.Debut.All.Suivante;
-                end loop;
-                Detruire := Cache.Debut.All.Suivante;
-                Cache.Debut.All.Suivante := Detruire.All.Suivante;
-                Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-                Free(Detruire);
-            end if;
-
-        -- Politique = LFU
         else
-            if not(Ligne_Presente_L(Cache, Paquet, Masque_Coherent, Interface_Coherente)) then
-                Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-                --On initialise son nombre d'utilisation à 1
-                Cache.Fin.All.Suivante.Nb_utilisation := 0;
-            else
-                --Si la ligne est deja dans le cache, on la cherche pour lui incrementer son nombre d'utilisations de 1
-                while (not(Cache.Debut.All.Suivante.Destination = Paquet) and then not(Cache.Debut.All.Suivante.Masque = Masque_Coherent) and then not(Cache.Debut.All.Suivante.Interface_eth = Interface_Coherente)) loop
-                    Cache.Debut := Cache.Debut.All.Suivante;
-                end loop;
-                Cache.Debut.All.Suivante.Nb_utilisation := Cache.Debut.All.Suivante.Nb_utilisation + 1;
-            end if;
+            Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
+            --On initialise son nombre d'utilisation à 1
+            Cache.Fin.All.Nb_utilisation := 0;    
         end if;
-
     end Maj_Cache;
 
 
-    function Supprimer_ligne_L(Cache : in out T_Cache_L; Politique : in T_Politique) return T_Cache_L is
+    procedure Supprimer_ligne_L(Cache : in out T_Cache_L; Politique : in T_Politique) is
         Detruire : T_Ptr_Cellule;
         compteur_min : Integer;
         Cache_parcours : T_Ptr_Cellule := Cache.Debut;
@@ -223,48 +174,43 @@ package body Cache_L is
                 Free(Detruire);
             end if;
         end if;
-        return Cache;
     end Supprimer_ligne_L;
+
+
+    function Cellule_Trouvee(Cellule : in T_Ptr_Cellule ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String) return Boolean is
+    begin 
+        return Cellule.all.Destination = Destination and then Cellule.all.Masque = Masque and then Cellule.all.Interface_eth = Interface_eth;
+    end Cellule_Trouvee;
 
 
     procedure Modif_Cache(Cache : in out T_Cache_L ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String ; Politique : in T_Politique) is
         Cache_parcours : T_Ptr_Cellule := Cache.Debut;
-        Detruire : T_Ptr_Cellule;
     begin
-        if Cache_parcours = Null or else (Cache_parcours.all.Destination = Destination and then Cache_parcours.all.Masque = Masque and then Cache_parcours.all.Interface_eth = Interface_eth and then Cache_parcours.all.Suivante = Null) then
-            raise Interface_Absente_Cache;
-        elsif Cache_parcours.all.Destination = Destination and then Cache_parcours.all.Masque = Masque and then Cache_parcours.all.Interface_eth = Interface_eth then
-            Null;
-        else 
-            while Cache_parcours.all.Suivante /= Null and then Cache_parcours.all.Suivante.all.Destination /= Destination and then Cache_parcours.all.Suivante.all.Masque and then Cache_parcours.all.Suivante.all.Interface_eth /= Interface_eth loop 
-                Cache_parcours := Cache_parcours.all.Suivante;
-            end loop;
-        end if;
-        if Cache_parcours = Null or else Cache_parcours.all.Suivante = Null then
-            raise Interface_Absente_Cache;
-        else 
-            if Politique = LFU then
-                if Cache_parcours = Cache.debut then
-                    Cache.debut.all.Nb_utilisation := Cache.debut.all.Nb_utilisation + 1;
-                else
-                    Cache_parcours := Cache_parcours.all.Suivante;
-                    Cache_parcours.all.Nb_utilisation := Cache_parcours.all.Nb_utilisation + 1;
-                end if;
-            elsif Politique = LRU then
+        if Politique = LRU then
+            declare
+                Detruire : T_Ptr_Cellule;
+            begin
                 Ajouter_C(Cache, Destination, Masque, Interface_eth);
-                if Cache_parcours = Cache.Debut then
+                if Cellule_Trouvee(Cache_parcours, Destination, Masque, Interface_eth) then
                     Detruire := Cache.Debut;
                     Cache.Debut := Cache.Debut.all.Suivante;
-                else
+                else 
+                    while not Cellule_Trouvee(Cache_parcours.all.Suivante, Destination, Masque, Interface_eth) loop 
+                        Cache_parcours := Cache_parcours.all.Suivante;
+                    end loop;
                     Detruire := Cache_parcours.all.Suivante;
-                    Cache_parcours.all.Suivante := Detruire.all.Suivante;
-                    
+                    Cache_parcours.all.Suivante := Detruire.all.Suivante; 
                 end if;
                 Free(Detruire);
-            else 
-                Null;
-            end if;
-        end if;      
+            end;
+        elsif Politique = LFU then
+            while not Cellule_Trouvee(Cache_parcours, Destination, Masque, Interface_eth) loop
+                Cache_parcours := Cache_parcours.all.Suivante;
+            end loop;
+            Cache_parcours.all.Nb_utilisation := Cache_parcours.all.Nb_utilisation + 1;
+        else
+            Null;
+        end if;    
     end Modif_Cache;
 
     procedure Chercher_Interface_L(Cache : in out T_Cache_L ; Paquet : in T_Adresse_IP ; Politique : in T_Politique ; Interface_eth : in out Unbounded_String) is
@@ -296,7 +242,5 @@ package body Cache_L is
             Modif_Cache(Cache, Destination_correspondante, Masque_Max, Interface_eth, Politique);
         end if;
     end Chercher_Interface_L;
-
-    
 
 end Cache_L;
