@@ -76,7 +76,7 @@ package body Adresse_IP is
      function Comp_Destination_Paquet(Destination: in T_Adresse_IP; Masque: in T_Adresse_IP; Paquet: in T_Adresse_IP) return Boolean is 
      begin
      
-          return (Paquet and Masque) = Destination;
+          return (Paquet and Masque) = (Destination and Masque);
           
      end Comp_Destination_Paquet;
 
