@@ -18,9 +18,6 @@ package Table_Routage is
         -- Renvoie un masque qui permettra de respecter la cohérence du cache (masque le plus long parmis les routes qui correspondent à la route utilisée)
         function Gerer_Coherence_Cache(Table : in T_Table_Routage ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP) return T_Adresse_IP;
 
-        -- Renvoie un masque qui permettra de respecter la cohérence du cache (masque le plus long parmis les routes qui correspondent à la route utilisée)
-        function Gerer_Coherence_Cache_Opti(Table : in T_Table_Routage ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP) return T_Adresse_IP;
-
         --Trouver l'interface correspondant au paquet dans la table de routage (récupère le masque et la destination de la route utilisée)
         procedure Chercher_Interface(Table : in T_Table_Routage ; Paquet : in T_Adresse_IP ; Interface_eth : out Unbounded_String ; Masque_Max : out T_Adresse_IP ; Destination_correspondante : out T_Adresse_IP);
 

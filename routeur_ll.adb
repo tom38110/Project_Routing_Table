@@ -10,7 +10,7 @@ with Cache_L;                      use Cache_L;
 with Table_Routage;                use Table_Routage;
 
 
--- mise en place d'un routeur avec cache.
+-- Mise en place d'un routeur avec cache sous forme d'une liste chaînée.
 procedure Routeur_LL is
 
     -- Affiche l'usage du programme
@@ -78,7 +78,8 @@ procedure Routeur_LL is
         end loop;
     end Traiter_Option;
 
-     procedure Afficher_Stats(Nb_defaut_cache : in Integer ; Nb_demande_route : in Integer) is
+    -- Affiche les statistiques du cache
+    procedure Afficher_Stats(Nb_defaut_cache : in Integer ; Nb_demande_route : in Integer) is
     begin
         Put("Nombre de défauts de cache : ");
         Put(Nb_defaut_cache, 1);
@@ -106,8 +107,8 @@ procedure Routeur_LL is
     Nb_demande_route : Integer; -- Nombre de demandes de routes
     ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
     AdresseIP, Masque : T_Adresse_IP; -- Adresse IP et Masque à gérer
-    Masque_Max, Destination_correspondante : T_Adresse_IP; -- Masque et destination de la route utilisée dans la table de routage
     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
+    Masque_Max, Destination_correspondante : T_Adresse_IP; -- Masque et destination de la route utilisée dans la table de routage
     Entree : File_Type; -- Le descripteur du fichier d'entrée
     Sortie : File_Type; -- Le descripteur du fichier de sortie
 
@@ -119,18 +120,18 @@ begin
     Open(Entree, In_File, To_String(Fich_Table));
     Initialiser(Table_Routage);
     begin
-    loop
-        AdresseIP := Lire_Adresse_IP(Entree);
-        Masque := Lire_Adresse_IP(Entree);
-        Interface_eth := Get_Line(Entree);
-        Trim(Interface_eth, Both);
-        Ajouter(Table_Routage, AdresseIP, Masque, Interface_eth);
-    exit when End_Of_File (Entree);
-    end loop;
+        loop
+            AdresseIP := Lire_Adresse_IP(Entree);
+            Masque := Lire_Adresse_IP(Entree);
+            Interface_eth := Get_Line(Entree);
+            Trim(Interface_eth, Both);
+            Ajouter(Table_Routage, AdresseIP, Masque, Interface_eth);
+        exit when End_Of_File (Entree);
+        end loop;
     exception
-    when End_Error =>
-        Put("Blancs en surplus à la fin du fichier.");
-        Null;
+        when End_Error =>
+            Put("Blancs en surplus à la fin du fichier.");
+            Null;
     end;
     Close(Entree);
 
@@ -141,59 +142,66 @@ begin
     Nb_defaut_cache := 0;
     Nb_demande_route := 0;
     i := 1;
-    loop
-    ligne := Get_Line(Entree);
-    Trim(ligne, Both);
-    if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
-        AdresseIP := Conv_String_IP(To_String(ligne));
-        begin
-            Chercher_Interface_L(Cache, AdresseIP, Politique, Interface_eth);
-        exception
-            when Interface_Absente_Cache =>
-                Nb_defaut_cache := Nb_defaut_cache + 1;
-                Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
-                -- Ajouter la ligne utilisée au cache en respectant la cohérence
-                Masque_Max := Gerer_Coherence_Cache(Table_Routage, Destination_correspondante, Masque_Max);
-                AdresseIP := (AdresseIP and Masque_Max);
-                Maj_Cache(Cache, Masque_Max, Interface_eth, AdresseIP, Capacite_Cache, Politique);
-        end;
-        Put_Line(Sortie, ligne & " " & Interface_eth);
-        Nb_demande_route := Nb_demande_route + 1;
-    elsif To_String(ligne) = "table" then
-        Put(To_String(ligne) & " (ligne ");
-        Put(i, 1);
-        Put(")");
-        New_Line;
-        Afficher(Table_Routage);
-    elsif To_String(ligne) = "cache" then
-        Put(To_String(ligne) & " (ligne ");
-        Put(i, 1);
-        Put(")");
-        New_Line;
-        Afficher_L(Cache);
-    elsif To_String(ligne) = "stat" then
-        if Stat then
+    begin
+        loop
+        ligne := Get_Line(Entree);
+        Trim(ligne, Both);
+        if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
+            AdresseIP := Conv_String_IP(To_String(ligne));
+            begin
+                -- Chercher une route correspondante dans le cache
+                Chercher_Interface_L(Cache, AdresseIP, Politique, Interface_eth);
+            exception
+                when Interface_Absente_Cache =>
+                    Nb_defaut_cache := Nb_defaut_cache + 1;
+                    -- Chercher une route correspondante dans la table de routage
+                    Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
+                    -- Ajouter la ligne utilisée au cache en respectant la cohérence
+                    Masque_Max := Gerer_Coherence_Cache(Table_Routage, Destination_correspondante, Masque_Max);
+                    AdresseIP := (AdresseIP and Masque_Max);
+                    Maj_Cache(Cache, Masque_Max, Interface_eth, AdresseIP, Capacite_Cache, Politique);
+            end;
+            Put_Line(Sortie, ligne & " " & Interface_eth);
+            Nb_demande_route := Nb_demande_route + 1;
+        elsif To_String(ligne) = "table" then
             Put(To_String(ligne) & " (ligne ");
             Put(i, 1);
             Put(")");
             New_Line;
-            Afficher_Stats(Nb_defaut_cache, Nb_demande_route);
-            Afficher_Stat_L(Cache, Capacite_Cache, Politique);
+            Afficher(Table_Routage);
+        elsif To_String(ligne) = "cache" then
+            Put(To_String(ligne) & " (ligne ");
+            Put(i, 1);
+            Put(")");
+            New_Line;
+            Afficher_L(Cache);
+        elsif To_String(ligne) = "stat" then
+            if Stat then
+                Put(To_String(ligne) & " (ligne ");
+                Put(i, 1);
+                Put(")");
+                New_Line;
+                Afficher_Stats(Nb_defaut_cache, Nb_demande_route);
+                Afficher_Stat_L(Cache, Capacite_Cache, Politique);
+            else
+                Null;
+            end if;
+        elsif To_String(ligne) = "fin" then
+            Put(To_String(ligne) & " (ligne ");
+            Put(i, 1);
+            Put(")");
+            New_Line;
         else
+            Put_Line("Erreur de lecture dans le fichier paquets");
+        end if; 
+        i := i + 1;
+        exit when End_Of_File (Entree) or To_String(ligne) = "fin";
+        end loop;
+    exception
+        when End_Error =>
+            Put("Blancs en surplus à la fin du fichier.");
             Null;
-        end if;
-    elsif To_String(ligne) = "fin" then
-        Put(To_String(ligne) & " (ligne ");
-        Put(i, 1);
-        Put(")");
-        New_Line;
-    else
-        Put_Line("Erreur de lecture dans le fichier paquets");
-    end if; 
-    i := i + 1;
-    exit when End_Of_File (Entree) or To_String(ligne) = "fin";
-    end loop;
-
+    end;
     --Fermeture des fichiers et vider la table de routage
     Close(Entree);
     Close(Sortie);

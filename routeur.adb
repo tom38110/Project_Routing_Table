@@ -8,9 +8,13 @@ with Adresse_IP;                   use Adresse_IP;
 with Table_Routage;                use Table_Routage;
 
 
+
 -- mise en place d'un routeur avec cache.
 procedure Routeur is
 
+     -- Type énuméré de la politique du cache
+     type T_Politique is (FIFO, LRU, LFU);
+     
      -- Affiche l'usage du programme
      procedure Afficher_Usage is
      begin
@@ -118,7 +122,7 @@ begin
           Trim(ligne, Both);
           if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
                AdresseIP := Conv_String_IP(To_String(ligne));
-               Interface_eth := Chercher_Element(Table_Routage, AdresseIP);
+               Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
                Put_Line(Sortie, ligne & " " & Interface_eth);
           elsif To_String(ligne) = "table" then
                Put(To_String(ligne) & " (ligne");

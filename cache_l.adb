@@ -19,7 +19,7 @@ package body Cache_L is
     procedure Vider_L(Cache : in out T_Cache_L) is
         Detruire : T_Ptr_Cellule;
     begin
-        while Cache.Debut.All.Suivante /= Null loop
+        while Cache.Debut /= Null loop
             Detruire := Cache.Debut;
             Cache.Debut := Cache.Debut.All.Suivante;
             Free(Detruire);
