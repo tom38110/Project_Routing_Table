@@ -1,4 +1,3 @@
-with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Adresse_IP;                   use Adresse_IP;
 
@@ -6,13 +5,10 @@ with Adresse_IP;                   use Adresse_IP;
 package Cache_L is
     type T_Cache_L is limited private;
 
-    type T_File is limited private;
-
-    Interface_Absente_Cache : exception;
-    Ligne_Presente_Cache : exception;
-
     -- Type énuméré de la politique du cache
     type T_Politique is (FIFO, LRU, LFU);
+
+    Interface_Absente_Cache : exception;
 
     --Ajouter à la fin du Cache l'adresseIP, le masque et l'interface dans le cache
     procedure Ajouter_C(Cache : in out T_Cache_L ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String);

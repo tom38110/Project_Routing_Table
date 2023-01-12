@@ -1,20 +1,17 @@
 with Ada.Text_IO;                  use Ada.Text_IO;
 with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
+with Ada.Float_Text_IO;            use Ada.Float_Text_IO;
 with Ada.Command_Line;             use Ada.Command_Line;
 with Ada.Strings;                  use Ada.Strings;
 with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;     use Ada.Text_IO.Unbounded_IO;
 with Adresse_IP;                   use Adresse_IP;
 with Cache_L;                      use Cache_L;
-with Table_Routage;
+with Table_Routage;                use Table_Routage;
 
 
 -- mise en place d'un routeur avec cache.
 procedure Routeur_LL is
-
-    package Table_Routage_L is 
-        new Table_Routage(T_Cache => T_Cache_L);
-    use Table_Routage_L;
 
     -- Affiche l'usage du programme
     procedure Afficher_Usage is
@@ -109,6 +106,7 @@ procedure Routeur_LL is
     Nb_demande_route : Integer; -- Nombre de demandes de routes
     ligne : Unbounded_String; -- Ligne lu dans le fichier des paquets
     AdresseIP, Masque : T_Adresse_IP; -- Adresse IP et Masque à gérer
+    Masque_Max, Destination_correspondante : T_Adresse_IP; -- Masque et destination de la route utilisée dans la table de routage
     Interface_eth : Unbounded_String; -- Interface correspondante à l'adresse IP
     Entree : File_Type; -- Le descripteur du fichier d'entrée
     Sortie : File_Type; -- Le descripteur du fichier de sortie
@@ -149,30 +147,34 @@ begin
     if '0' <= To_String(ligne)(1) and then To_String(ligne)(1) <= '9' then
         AdresseIP := Conv_String_IP(To_String(ligne));
         begin
-            Interface_eth := Chercher_Interface_L(Cache, AdresseIP);
+            Chercher_Interface_L(Cache, AdresseIP, Politique, Interface_eth);
         exception
             when Interface_Absente_Cache =>
                 Nb_defaut_cache := Nb_defaut_cache + 1;
-                Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Cache, Capacite_Cache, Politique);
+                Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
+                -- Ajouter la ligne utilisée au cache en respectant la cohérence
+                Masque_Max := Gerer_Coherence_Cache(Table_Routage, Destination_correspondante, Masque_Max);
+                AdresseIP := (AdresseIP and Masque_Max);
+                Maj_Cache(Cache, Masque_Max, Interface_eth, AdresseIP, Capacite_Cache, Politique);
         end;
         Put_Line(Sortie, ligne & " " & Interface_eth);
         Nb_demande_route := Nb_demande_route + 1;
     elsif To_String(ligne) = "table" then
-        Put(To_String(ligne) & " (ligne");
-        Put(i, 2);
+        Put(To_String(ligne) & " (ligne ");
+        Put(i, 1);
         Put(")");
         New_Line;
         Afficher(Table_Routage);
     elsif To_String(ligne) = "cache" then
-        Put(To_String(ligne) & " (ligne");
-        Put(i, 2);
+        Put(To_String(ligne) & " (ligne ");
+        Put(i, 1);
         Put(")");
         New_Line;
         Afficher_L(Cache);
     elsif To_String(ligne) = "stat" then
         if Stat then
-            Put(To_String(ligne) & " (ligne");
-            Put(i, 2);
+            Put(To_String(ligne) & " (ligne ");
+            Put(i, 1);
             Put(")");
             New_Line;
             Afficher_Stats(Nb_defaut_cache, Nb_demande_route);
@@ -181,8 +183,8 @@ begin
             Null;
         end if;
     elsif To_String(ligne) = "fin" then
-        Put(To_String(ligne) & " (ligne");
-        Put(i, 2);
+        Put(To_String(ligne) & " (ligne ");
+        Put(i, 1);
         Put(")");
         New_Line;
     else

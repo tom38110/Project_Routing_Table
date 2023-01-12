@@ -1,4 +1,7 @@
 with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
+with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
+with Ada.Strings;                  use Ada.Strings;
+
 package body Adresse_IP is
 
 

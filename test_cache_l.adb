@@ -11,7 +11,7 @@ procedure Test_Cache_L is
 
     Capacite_Max : constant Integer := 10;
     Politique : T_Politique := FIFO;
-    Cache : T_Cache_L := cache.txt;
+    Cache : T_Cache_L := ;
     Cache_parcours : T_Ptr_Cellule;
     Paquet : Adresse_IP := Conv_String_IP("147.127.25.12");
     Destination : Adresse_IP := Conv_String_IP("147.127.25.0");

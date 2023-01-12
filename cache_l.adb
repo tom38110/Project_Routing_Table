@@ -1,5 +1,6 @@
 with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;                  use Ada.Text_IO;
+with Ada.Integer_Text_IO;          use Ada.Integer_Text_IO;
 
 package body Cache_L is
 
@@ -29,41 +30,31 @@ package body Cache_L is
 
     
     function Taille_L(Cache : in T_Cache_L) return Integer is
-        Cache_parcours : T_Ptr_Cellule := Cache.Debut;
-        compteur : Integer := 0;
     begin
-        while Cache_parcours /= Null loop
-            compteur := compteur +1;
-            Cache_parcours := Cache_parcours.All.Suivante;
-        end loop;
-        return compteur;
+        return Cache.Nb_elem;
     end Taille_L;
 
 
 
     procedure Afficher_Stat_L(Cache : in T_Cache_L; Capacite_Max : in Integer; Politique : in T_Politique) is
     begin
-        Put("Le Cache est affiché ci-dessous: ");
+        Put("Le cache est affiché ci-dessous : ");
         New_Line;
         Afficher_L(Cache);
-        New_Line;
-        Put("La capacité maximale du Cache est: ");
+        Put("La capacité maximale du cache est : ");
         Put(Capacite_Max, 1);
         New_Line;
-        Put("La taille effective du Cache est: ");
+        Put("La taille effective du cache est : ");
         Put(Cache.Nb_elem, 1);
         New_Line;
-        Put("La Politique de gestion de Cache est: ");
-        Put(Politique);
+        Put("La Politique de gestion de Cache est : ");
+        Put(T_Politique'Image(Politique));
         New_Line;
     end Afficher_Stat_L;
 
 
 
     function Cache_Plein_L(Cache : in T_Cache_L; Capacite_Max : in Integer) return Boolean is
-        --On l'initialise à 1 comme la dernière cellule du Cache ne sera pas comptée dans la boucle
-        compteur : Integer := 1;
-        Cache_parcours : T_Ptr_Cellule := Cache.Debut;
     begin
         return Cache.Nb_elem = Capacite_Max; 
     end Cache_Plein_L;
@@ -72,12 +63,13 @@ package body Cache_L is
     procedure Ajouter_C(Cache : in out T_Cache_L ; Destination : in T_Adresse_IP ; Masque : in T_Adresse_IP ; Interface_eth : in Unbounded_String) is
     begin
         if Cache.Debut = Null then
-            Cache.Debut := new T_Cellule'(Destination, Masque, Interface_eth, Null);
+            Cache.Debut := new T_Cellule'(Destination, Masque, Interface_eth, Null, 0);
             Cache.Fin := Cache.Debut;
         else
-            Cache.Fin.All.Suivante := new T_Cellule'(Destination, Masque, Interface_eth, Null);
+            Cache.Fin.All.Suivante := new T_Cellule'(Destination, Masque, Interface_eth, Null, 0);
             Cache.Fin := Cache.Fin.All.Suivante;
-        end if;        
+        end if;
+        Cache.Nb_elem := Cache.Nb_elem + 1;
     end Ajouter_C;
 
 
@@ -129,13 +121,7 @@ package body Cache_L is
         else
             null;
         end if;   
-        if Politique = FIFO or LRU then
-            Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-        else
-            Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
-            --On initialise son nombre d'utilisation à 1
-            Cache.Fin.All.Nb_utilisation := 0;    
-        end if;
+        Ajouter_C(Cache, Paquet, Masque_Coherent, Interface_Coherente);
     end Maj_Cache;
 
 
@@ -174,6 +160,7 @@ package body Cache_L is
                 Free(Detruire);
             end if;
         end if;
+        Cache.Nb_elem := Cache.Nb_elem - 1;
     end Supprimer_ligne_L;
 
 
