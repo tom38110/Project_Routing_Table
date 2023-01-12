@@ -81,9 +81,13 @@ procedure Routeur_LA is
         Put("Nombre de demandes de route : ");
         Put(Nb_demande_route, 1);
         New_Line;
-        Put("Taux de défaut de cache : ");
-        Put(Float(Nb_defaut_cache)/Float(Nb_demande_route));
-        New_Line;
+        if Nb_demande_route > 0 then
+            Put("Taux de défaut de cache : ");
+            Put(Float(Nb_defaut_cache)/Float(Nb_demande_route));
+            New_Line;
+        else
+            Put_Line("Impossible de calculer le taux car il n'y a pas eu de demande de route");
+        end if;
     end Afficher_Stats;
 
     Capacite_Cache : Integer; -- Capacité maximale du cache
