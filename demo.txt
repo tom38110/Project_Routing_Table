@@ -1,4 +1,36 @@
 Script de la démonstration :
 
-    > gnatmake -gnatwa routeur_ll.adb -o routeur_LL
-    > ./routeur_LL
+    - Démonstration du routeur sans cache :
+
+        > gnatmake -gnatwa routeur.adb
+
+        > ./routeur
+        > vim table.txt
+        > vim paquets.txt 
+        > vim resultats.txt
+
+    - Démonstration du routeur avec cache sous forme de liste chaînée :
+
+        > gnatmake -gnatwa routeur_ll.adb -o routeur_LL
+
+        > ./routeur_LL -c 3 
+        Mettre en évidence la politique FIFO
+        > vim resultats.txt
+
+        > routeur_LL -t table_ex1.txt -p paquet_ex1.txt -r resultat_ex1.txt
+        Mettre en évidence la cohérence du cache
+        > vim table_ex1.txt
+        > vim paquet_ex1.txt
+        > vim resultat_ex1.txt
+
+        > ./routeur_LL -c 5 -t table_exLFU.txt -p paquet_exLFU.txt -P LRU -S -r resultat_exLFU.txt -P LFU -s
+        Mettre en évidence la politique LFU
+        > vim table_exLFU.txt
+        > vim paquet_exLFU.txt
+        > vim resultat_exLFU.txt
+
+        > valgrind ./routeur_LL -c 5 -t table_exLRU.txt -p paquet_exLRU.txt -P LRU -r resultat_exLRU.txt
+        Mettre en évidence la politique LRU
+        > vim table_exLRU.txt
+        > vim paquet_exLRU.txt
+        > vim resultat_exLRU.txt

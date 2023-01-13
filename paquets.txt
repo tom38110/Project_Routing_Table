@@ -9,7 +9,6 @@ cache
 cache
 147.127.20.20
 cache
-table
 147.127.32.32
-cache
+stat
 fin

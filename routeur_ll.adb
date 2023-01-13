@@ -89,7 +89,7 @@ procedure Routeur_LL is
         New_Line;
         if Nb_demande_route > 0 then
             Put("Taux de défaut de cache : ");
-            Put(Float(Nb_defaut_cache)/Float(Nb_demande_route));
+            Put(Float(Nb_defaut_cache)/Float(Nb_demande_route), 1);
             New_Line;
         else
             Put_Line("Impossible de calculer le taux car il n'y a pas eu de demande de route");

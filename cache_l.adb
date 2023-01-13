@@ -45,7 +45,7 @@ package body Cache_L is
         Put(Capacite_Max, 1);
         New_Line;
         Put("La taille effective du cache est : ");
-        Put(Cache.Nb_elem, 1);
+        Put(Taille_L(Cache), 1);
         New_Line;
         Put("La Politique de gestion de Cache est : ");
         Put(T_Politique'Image(Politique));
@@ -56,7 +56,7 @@ package body Cache_L is
 
     function Cache_Plein_L(Cache : in T_Cache_L; Capacite_Max : in Integer) return Boolean is
     begin
-        return Cache.Nb_elem = Capacite_Max; 
+        return Taille_L(Cache) = Capacite_Max; 
     end Cache_Plein_L;
 
 
@@ -102,8 +102,8 @@ package body Cache_L is
             compteur_min := Cache_parcours.All.Nb_utilisation;
             Cache_parcours := Cache_parcours.All.Suivante; 
             while Cache_parcours /= Null loop
-                    if compteur_min > cache.Debut.All.Nb_utilisation then
-                        compteur_min := cache.Debut.All.Nb_utilisation;
+                    if compteur_min > Cache_parcours.all.Nb_utilisation then
+                        compteur_min := Cache_parcours.All.Nb_utilisation;
                     else
                         Null;
                     end if;
@@ -177,7 +177,9 @@ package body Cache_L is
             declare
                 Detruire : T_Ptr_Cellule;
             begin
+                -- Ajouter l'élément en fin de liste (attention : nombre d'éléments augmenté)
                 Ajouter_C(Cache, Destination, Masque, Interface_eth);
+                -- Supprimer son occurence avant
                 if Cellule_Trouvee(Cache_parcours, Destination, Masque, Interface_eth) then
                     Detruire := Cache.Debut;
                     Cache.Debut := Cache.Debut.all.Suivante;
@@ -189,6 +191,8 @@ package body Cache_L is
                     Cache_parcours.all.Suivante := Detruire.all.Suivante; 
                 end if;
                 Free(Detruire);
+                -- Remettre à jour le nombre d'élément
+                Cache.Nb_elem := Cache.Nb_elem - 1;
             end;
         elsif Politique = LFU then
             while not Cellule_Trouvee(Cache_parcours, Destination, Masque, Interface_eth) loop
