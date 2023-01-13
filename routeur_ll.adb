@@ -156,6 +156,7 @@ begin
                     Nb_defaut_cache := Nb_defaut_cache + 1;
                     -- Chercher une route correspondante dans la table de routage
                     Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
+                    Put_Line("L'interface est : " & Interface_eth);
                     -- Ajouter la ligne utilisée au cache en respectant la cohérence
                     Masque_Max := Gerer_Coherence_Cache(Table_Routage, Destination_correspondante, Masque_Max);
                     AdresseIP := (AdresseIP and Masque_Max);

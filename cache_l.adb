@@ -208,7 +208,7 @@ package body Cache_L is
     begin
         -- Recherche des routes correspondantes
         while Cache_parcours /= Null loop
-            if Comp_Destination_Paquet(Cache_parcours.all.Destination, Cache_parcours.all.Masque, Paquet) and then Cache_parcours.all.Masque > Masque_Max then
+            if Comp_Destination_Paquet(Cache_parcours.all.Destination, Cache_parcours.all.Masque, Paquet) and then Cache_parcours.all.Masque >= Masque_Max then
                 Interface_eth := Cache_parcours.all.Interface_eth;
                 Masque_Max := Cache_parcours.all.Masque;
                 Destination_correspondante := Cache_parcours.all.Destination;
