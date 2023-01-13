@@ -1,5 +1,4 @@
 Script de la démonstration :
 
-    > gnatmake -gnatwa routeur_ll.adb -o Routeur_LL
+    > gnatmake -gnatwa routeur_ll.adb -o routeur_LL
     > ./routeur_LL
-    
