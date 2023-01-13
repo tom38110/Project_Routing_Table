@@ -126,26 +126,26 @@ begin
 			Chercher_Interface(Table_Routage, AdresseIP, Interface_eth, Masque_Max, Destination_correspondante);
 			Put_Line(Sortie, ligne & " " & Interface_eth);
 		elsif To_String(ligne) = "table" then
-			Put(To_String(ligne) & " (ligne");
-			Put(i, 2);
+			Put(To_String(ligne) & " (ligne ");
+			Put(i, 1);
 			Put(")");
 			New_Line;
 			Afficher(Table_Routage);
 		elsif To_String(ligne) = "cache" then
-			Put(To_String(ligne) & " (ligne");
-			Put(i, 2);
+			Put(To_String(ligne) & " (ligne ");
+			Put(i, 1);
 			Put(")");
 			New_Line;
 			Null; -- Pour le moment pas de cache
 		elsif To_String(ligne) = "stat" then
-			Put(To_String(ligne) & " (ligne");
-			Put(i, 2);
+			Put(To_String(ligne) & " (ligne ");
+			Put(i, 1);
 			Put(")");
 			New_Line;
 			Null; -- Pour le moment pas de cache
 		elsif To_String(ligne) = "fin" then
-			Put(To_String(ligne) & " (ligne");
-			Put(i, 2);
+			Put(To_String(ligne) & " (ligne ");
+			Put(i, 1);
 			Put(")");
 			New_Line;
 			Null;
