@@ -202,6 +202,7 @@ begin
             Put("Blancs en surplus à la fin du fichier.");
             Null;
     end;
+    
     --Fermeture des fichiers et vider la table de routage
     Close(Entree);
     Close(Sortie);
